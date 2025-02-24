@@ -1,24 +1,20 @@
-import './globals.css'
+import AuthForm from '@/features/auths/components/auth-form'
+import AuthHeader from '@/features/auths/components/auth-header'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Kob Store | E-Commerce Worksshop',
-    template: '%s | E-Commerce Workshop',
-  },
+  title: 'สมัครสมาชิก',
   description:
     'ร้านค้าออนไลน์อันดับ 1 สำหรับสินค้าไอทีครบวงจร พร้อมบริการจัดส่งเร็วและราคาที่คุ้มค่า!',
 }
 
-interface RootLayoutProps {
-  children: React.ReactNode
-}
+const SignupPage = () => {
+  const type = 'signup'
 
-const RootLayout = ({ children }: RootLayoutProps) => {
   return (
-    <html lang='en'>
-      <body>{children}</body>
-    </html>
+    <AuthHeader type={type}>
+      <AuthForm type={type} />
+    </AuthHeader>
   )
 }
-export default RootLayout
+export default SignupPage
