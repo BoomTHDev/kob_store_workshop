@@ -5,6 +5,8 @@ import SubmitBtn from '@/components/shared/submit-btn'
 import { CardContent, CardFooter } from '@/components/ui/card'
 import Form from 'next/form'
 import AuthFooter from './auth-footer'
+import { useForm } from '@/hooks/use-form'
+import { authAction } from '../actions/auths'
 
 interface AuthFormProps {
   type: 'signup' | 'signin'
@@ -24,11 +26,22 @@ const AuthForm = ({ type }: AuthFormProps) => {
         type={type}
         required={required}
       />
+      {errors[id] && (
+        <span className='text-sm text-red-500'>{errors[id][0]}</span>
+      )}
     </div>
   )
 
+  const { errors, formAction, isPending, clearErrors } = useForm(
+    authAction,
+    '/'
+  )
+
   return (
-    <Form action=''>
+    <Form
+      action={formAction}
+      onChange={clearErrors}
+    >
       <CardContent className='flex flex-col gap-3'>
         {type === 'signup' && renderInput('ชื่อผู้ใช้', 'name')}
         {renderInput('อีเมล', 'email', 'email', true)}
@@ -41,6 +54,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
         <SubmitBtn
           name={type === 'signup' ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ'}
           className='w-full'
+          pending={isPending}
         />
       </CardFooter>
     </Form>

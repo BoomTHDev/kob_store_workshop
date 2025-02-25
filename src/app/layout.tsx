@@ -1,9 +1,10 @@
 import './globals.css'
 import type { Metadata } from 'next'
+import { Toaster } from '@/components/ui/sonner'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Kob Store | E-Commerce Worksshop',
+    default: 'Kob Store | E-Commerce Workshop',
     template: '%s | E-Commerce Workshop',
   },
   description:
@@ -17,7 +18,10 @@ interface RootLayoutProps {
 const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang='en'>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster />
+      </body>
     </html>
   )
 }

@@ -21,7 +21,6 @@ const InputForm = ({
       <Input
         id={id}
         name={id}
-        required={required}
         {...props}
       />
     </div>
