@@ -36,8 +36,6 @@ const AuthForm = ({ type }: AuthFormProps) => {
     '/'
   )
 
-  console.log(errors)
-
   return (
     <Form
       action={formAction}
