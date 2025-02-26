@@ -7,6 +7,7 @@ import Form from 'next/form'
 import AuthFooter from './auth-footer'
 import { useForm } from '@/hooks/use-form'
 import { authAction } from '../actions/auths'
+import ErrorMessage from '@/components/shared/error-message'
 
 interface AuthFormProps {
   type: 'signup' | 'signin'
@@ -19,16 +20,14 @@ const AuthForm = ({ type }: AuthFormProps) => {
     type = 'text',
     required = false
   ) => (
-    <div>
+    <div className='flex flex-col gap-2'>
       <InputForm
         label={label}
         id={id}
         type={type}
         required={required}
       />
-      {errors[id] && (
-        <span className='text-sm text-red-500'>{errors[id][0]}</span>
-      )}
+      {errors[id] && <ErrorMessage error={errors[id][0]} />}
     </div>
   )
 
@@ -36,6 +35,8 @@ const AuthForm = ({ type }: AuthFormProps) => {
     authAction,
     '/'
   )
+
+  console.log(errors)
 
   return (
     <Form

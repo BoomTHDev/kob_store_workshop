@@ -72,3 +72,15 @@ export const signupSchema = z.object({
     path: ['confirmPassword']
   }
 )
+
+// Main Signin Schema
+export const signinSchema = z.object({
+  email: z.string()
+    .email({ message: ERROR_MESSAGE.email.format })
+    .refine(
+      (email) => isValidEmailDomain(email),
+      { message: ERROR_MESSAGE.email.domain }
+    ),
+
+  password: passwordSchema,
+})
