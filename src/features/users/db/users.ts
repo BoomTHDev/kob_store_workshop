@@ -24,7 +24,6 @@ export const getUserById = async (id: string) => {
         tel: true
       }
     })
-    console.log(user)
     return user
   } catch (error) {
     console.error('Error getting user by id:', error)
