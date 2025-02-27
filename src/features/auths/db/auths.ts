@@ -4,6 +4,7 @@ import { genSalt, hash, compare } from 'bcrypt'
 import { SignJWT } from 'jose'
 import { cookies, headers } from 'next/headers'
 import { getUserById } from '@/features/users/db/users'
+import { revalidateUserCache } from '@/features/users/db/cache'
 
 interface SignupInput {
   name: string
@@ -72,6 +73,8 @@ export const signup = async (input: SignupInput) => {
 
     const token = await generateJwtToken(newUser.id)
     await setCookieToken(token)
+
+    revalidateUserCache(newUser.id)
 
   } catch (error) {
     console.error('Error sign up user:', error)

@@ -3,12 +3,13 @@ import {
   unstable_cacheLife as cacheLife,
   unstable_cacheTag as cacheTag
 } from 'next/cache'
+import { getUserIdTag } from './cache'
 
 export const getUserById = async (id: string) => {
   'use cache'
 
   cacheLife('hours')
-  cacheTag('user')
+  cacheTag(getUserIdTag(id))
   try {
     const user = await db.user.findUnique({
       where: { id, status: 'Active' },
