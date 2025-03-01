@@ -134,3 +134,12 @@ export const authCheck = async () => {
   const userId = (await headers()).get('x-user-id')
   return userId ? await getUserById(userId) : null
 }
+
+export const signout = async () => {
+  try {
+    (await cookies()).delete('token')
+  } catch (error) {
+    console.error('Error sign out user:', error)
+    return { message: 'เกิดข้อผิดพลาดในการออกจากระบบ' }
+  }
+}

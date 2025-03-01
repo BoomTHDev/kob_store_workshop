@@ -7,11 +7,12 @@ interface NavbarProps {
 }
 
 const Navbar = ({ user }: NavbarProps) => {
+
   return (
     <nav className='flex items-center gap-3'>
       {/* Mobile Navigation */}
       {user && <CartIcon />}
-      <MobileMenu />
+      <MobileMenu user={user} />
 
       {/* Desktop Navigation */}
       <div className='hidden'>
