@@ -75,7 +75,7 @@ const MobileMenu = ({ user }: MobileMenuProps) => {
 
         {user && (
           <SheetFooter>
-            <SignoutButton />
+            <SignoutButton isMobile />
           </SheetFooter>
         )}
       </SheetContent>
