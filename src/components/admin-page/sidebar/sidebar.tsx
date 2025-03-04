@@ -4,12 +4,13 @@ import { cn } from '@/lib/utils'
 import { useSidebar } from '@/providers/SidebarProvider'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { FolderTree, LayoutDashboard, X } from 'lucide-react'
+import { FolderTree, LayoutDashboard, LogOut, X } from 'lucide-react'
 import { UserType } from '@/types/user'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import SidebarLink from './sidebar-link'
 import { usePathname } from 'next/navigation'
+import { useSignout } from '@/hooks/use-sign-out'
 
 interface SidebarAdminProps {
   user: UserType
@@ -18,6 +19,7 @@ interface SidebarAdminProps {
 const SidebarAdmin = ({ user }: SidebarAdminProps) => {
   const { isSidebarOpen, toggleSidebar } = useSidebar()
   const pathname = usePathname()
+  const { isPending, handleSignout } = useSignout()
 
   const sidebarLinks = [
     {
@@ -112,6 +114,19 @@ const SidebarAdmin = ({ user }: SidebarAdminProps) => {
               </nav>
             </div>
           </ScrollArea>
+        </div>
+
+        {/* Signout Button */}
+        <div className='border-t p-4'>
+          <Button
+            variant='ghost'
+            className='w-full justify-start gap-3 text-muted-foreground hover:text-foreground cursor-pointer'
+            onClick={handleSignout}
+            disabled={isPending}
+          >
+            <LogOut size={20} />
+            <span>Logout</span>
+          </Button>
         </div>
       </aside>
     </div>
