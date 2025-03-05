@@ -2,6 +2,7 @@ import { authCheck } from '@/features/auths/db/auths'
 import { redirect } from 'next/navigation'
 import { SidebarProvider } from '@/providers/SidebarProvider'
 import SidebarAdmin from '@/components/admin-page/sidebar/sidebar'
+import HeaderAdmin from '@/components/admin-page/header/header'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -20,7 +21,7 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
         <SidebarAdmin user={user} />
 
         <div className='flex-1 flex flex-col overflow-hidden'>
-          {/* <div>Navbar</div> */}
+          <HeaderAdmin />
           <main className='flex-1 overflow-y-auto md:ml-64 pt-16 p-4 md:px-6 transition-all duration-200'>
             {children}
           </main>

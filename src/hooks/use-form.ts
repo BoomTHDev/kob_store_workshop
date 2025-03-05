@@ -16,12 +16,12 @@ export const useForm = (action: ActionType, route?: string) => {
     if (state.message) {
       if (state.success) {
         toast.success(state.message)
-        route && router.push(route)
+        if (route) router.push(route)
       } else {
         toast.error(state.message)
       }
     }
-  }, [state, route, router, toast])
+  }, [state, route, router])
 
   const clearErrors = () => setErrors({})
 
