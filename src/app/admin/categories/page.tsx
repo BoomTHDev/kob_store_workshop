@@ -1,6 +1,16 @@
 import { Badge } from '@/components/ui/badge'
+import { getCategories } from '@/features/categories/db/categories'
 
-const CategoriesAdminPage = () => {
+const CategoriesAdminPage = async () => {
+  const categories = await getCategories()
+
+  const activeCategoryCount = categories.filter(
+    (c) => c.status === 'Active'
+  ).length
+  const inactiveCategoryCount = categories.filter(
+    (c) => c.status === 'Inactive'
+  ).length
+
   return (
     <div className='p-4 sm:p-6 space-y-6'>
       {/* Category Header */}
@@ -19,7 +29,9 @@ const CategoriesAdminPage = () => {
             variant='outline'
             className='px-2 sm:px-3 py-1 text-xs sm:text-sm'
           >
-            <span className='font-semibold text-green-600'>10</span>
+            <span className='font-semibold text-green-600'>
+              {activeCategoryCount}
+            </span>
             Active
           </Badge>
 
@@ -27,7 +39,9 @@ const CategoriesAdminPage = () => {
             variant='outline'
             className='px-2 sm:px-3 py-1 text-xs sm:text-sm'
           >
-            <span className='font-semibold text-gray-500'>10</span>
+            <span className='font-semibold text-gray-500'>
+              {inactiveCategoryCount}
+            </span>
             Inactive
           </Badge>
 
@@ -35,7 +49,9 @@ const CategoriesAdminPage = () => {
             variant='outline'
             className='px-2 sm:px-3 py-1 text-xs sm:text-sm'
           >
-            <span className='font-semibold text-blue-600'>10</span>
+            <span className='font-semibold text-blue-600'>
+              {categories.length}
+            </span>
             Total
           </Badge>
         </div>
