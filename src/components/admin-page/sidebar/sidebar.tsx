@@ -4,16 +4,7 @@ import { cn } from '@/lib/utils'
 import { useSidebar } from '@/providers/SidebarProvider'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import {
-  ClipboardList,
-  FolderTree,
-  LayoutDashboard,
-  LogOut,
-  Percent,
-  ShoppingCart,
-  Users,
-  X,
-} from 'lucide-react'
+import { FolderTree, LayoutDashboard, LogOut, X } from 'lucide-react'
 import { UserType } from '@/types/user'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
