@@ -37,29 +37,9 @@ const SidebarAdmin = ({ user }: SidebarAdminProps) => {
       label: 'Dashboard',
     },
     {
-      href: '/admin/users',
-      icon: <Users size={20} />,
-      label: 'Users',
-    },
-    {
-      href: '/admin/products',
-      icon: <ShoppingCart size={20} />,
-      label: 'Products',
-    },
-    {
       href: '/admin/categories',
       icon: <FolderTree size={20} />,
       label: 'Categories',
-    },
-    {
-      href: '/admin/promotions',
-      icon: <Percent size={20} />,
-      label: 'Promotions',
-    },
-    {
-      href: '/admin/orders',
-      icon: <ClipboardList size={20} />,
-      label: 'Orders',
     },
   ]
 
