@@ -7,12 +7,20 @@ interface SidebarLinkProps {
   href: string
   icon: React.ReactNode
   isActive: boolean
+  onClose: () => void
 }
 
-const SidebarLink = ({ label, href, icon, isActive }: SidebarLinkProps) => {
+const SidebarLink = ({
+  label,
+  href,
+  icon,
+  isActive,
+  onClose,
+}: SidebarLinkProps) => {
   return (
     <Button
       variant={isActive ? 'secondary' : 'ghost'}
+      onClick={onClose}
       asChild
     >
       <Link
