@@ -25,20 +25,28 @@ const CategoryForm = () => {
         </CardDescription>
       </CardHeader>
 
-      <Form action=''>
+      <Form
+        action=''
+        className='space-y-4'
+      >
         <CardContent>
-          <div>
+          <div className='space-y-2'>
             <InputForm
               label='Category name'
               id='category-name'
               placeholder='Enter category name'
+              required
             />
             {/* Error Message */}
           </div>
         </CardContent>
 
         <CardFooter>
-          <SubmitBtn name='Add Category' />
+          <SubmitBtn
+            name='Add Category'
+            icon={Plus}
+            className='w-full'
+          />
         </CardFooter>
       </Form>
     </Card>
