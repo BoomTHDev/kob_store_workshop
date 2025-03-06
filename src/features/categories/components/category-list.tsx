@@ -1,8 +1,10 @@
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CategoryType } from '@/types/category'
-import { Search } from 'lucide-react'
+import { Pencil, Search, Trash2 } from 'lucide-react'
 
 interface CategoryListProps {
   categories: CategoryType[]
@@ -62,7 +64,47 @@ const CategoryList = ({ categories }: CategoryListProps) => {
         </div>
 
         {cate.length > 0 ? (
-          cate.map((category, index) => <div key={index}>Test</div>)
+          cate.map((category, index) => (
+            <div
+              key={index}
+              className='grid grid-cols-12 py-3 px-2 sm:px-4 border-t items-center hover:bg-gray-50 transition-colors duration-100 text-sm'
+            >
+              <div className='col-span-1 hidden sm:block'>{index + 1}</div>
+              <div className='col-span-6 sm:col-span-5 truncate pr-2'>
+                {category.name}
+              </div>
+              <div className='col-span-2 text-center hidden sm:block'>0</div>
+              <div className='col-span-3 sm:col-span-2 text-center'>
+                <Badge
+                  variant={
+                    category.status === 'Active' ? 'default' : 'destructive'
+                  }
+                  className='px-1 sm:px-2'
+                >
+                  {category.status}
+                </Badge>
+              </div>
+              <div className='col-span-3 sm:col-span-2 text-right'>
+                {/* Mobile Action Buttons */}
+                <div className='flex justify-end gap-1 md:hidden'>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    className='size-7'
+                  >
+                    <Pencil size={15} />
+                  </Button>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    className='size-7'
+                  >
+                    <Trash2 size={15} />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))
         ) : (
           <div className='py-8 text-center text-muted-foreground'>
             No categories found matching your search
