@@ -13,6 +13,11 @@ interface CreateCategoryInput {
   name: string
 }
 
+interface UpdateCategoryInput {
+  id: string
+  name: string
+}
+
 export const getCategories = async () => {
   'use cache'
 
@@ -76,6 +81,64 @@ export const createCategory = async (input: CreateCategoryInput) => {
 
   } catch (error) {
     console.error('Error creating new category:', error)
+    return {
+      message: 'Something went wrong. Please try again later'
+    }
+  }
+}
+
+export const updateCategory = async (input: UpdateCategoryInput) => {
+  try {
+    const { success, data, error } = categorySchema.safeParse(input)
+    if (!success) {
+      return {
+        message: 'Please enter valid data',
+        error: error.flatten().fieldErrors
+      }
+    }
+
+    // Check if category exists
+    const existsingCategory = await db.category.findUnique({
+      where: {
+        id: input.id
+      }
+    })
+
+    if (!existsingCategory) {
+      return {
+        message: 'Category not found'
+      }
+    }
+
+    // Check if another category with the same name exists
+    const duplicateCategory = await db.category.findFirst({
+      where: {
+        name: data.name,
+        id: {
+          not: input.id
+        }
+      }
+    })
+
+    if (duplicateCategory) {
+      return {
+        message: 'A category with this name already exists'
+      }
+    }
+
+    // Update category
+    const updatedCategory = await db.category.update({
+      where: {
+        id: input.id
+      },
+      data: {
+        name: data.name
+      }
+    })
+
+    revalidateCategoryCache(updatedCategory.id)
+  } catch (error) {
+    console.error('Error updating category:', error)
     return {
       message: 'Something went wrong. Please try again later'
     }
