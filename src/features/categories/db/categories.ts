@@ -5,6 +5,9 @@ import {
 } from 'next/cache'
 import { getCategoryGlobalTag, revalidateCategoryCache } from './cache'
 import { categorySchema } from '@/features/categories/schemas/categories'
+import { authCheck } from '@/features/auths/db/auths'
+import { canCreateCategory } from '@/features/categories/permissions/categories'
+import { redirect } from 'next/navigation'
 
 interface CreateCategoryInput {
   name: string
@@ -32,6 +35,13 @@ export const getCategories = async () => {
 }
 
 export const createCategory = async (input: CreateCategoryInput) => {
+
+  const user = await authCheck()
+
+  if (!user || !canCreateCategory(user)) {
+    redirect('/')
+  }
+
   try {
     const { success, data, error } = categorySchema.safeParse(input)
 
