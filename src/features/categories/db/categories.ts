@@ -5,6 +5,10 @@ import {
 } from 'next/cache'
 import { getCategoryGlobalTag } from './cache'
 
+interface CreateCategoryInput {
+  name: string
+}
+
 export const getCategories = async () => {
   'use cache'
 
@@ -23,5 +27,16 @@ export const getCategories = async () => {
   } catch (error) {
     console.error('Error getting categories data:', error)
     return []
+  }
+}
+
+export const createCategory = async (input: CreateCategoryInput) => {
+  try {
+
+  } catch (error) {
+    console.error('Error creating new category:', error)
+    return {
+      message: 'Something went wrong. Please try again later'
+    }
   }
 }
