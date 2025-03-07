@@ -6,9 +6,17 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-const EditCategoryModal = () => {
+interface EditCategoryModalProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+const EditCategoryModal = ({ open, onOpenChange }: EditCategoryModalProps) => {
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>Edit Category</DialogTitle>

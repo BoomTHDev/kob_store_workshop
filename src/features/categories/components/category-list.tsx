@@ -1,3 +1,5 @@
+'use client'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,12 +16,19 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CategoryType } from '@/types/category'
 import { MoreVertical, Pencil, Search, Trash2 } from 'lucide-react'
 import EditCategoryModal from './edit-category-modal'
+import { useState } from 'react'
 
 interface CategoryListProps {
   categories: CategoryType[]
 }
 
 const CategoryList = ({ categories }: CategoryListProps) => {
+  const [isEditModal, setIsEditModal] = useState(false)
+
+  const handleEditClick = () => {
+    setIsEditModal(true)
+  }
+
   return (
     <>
       <Card>
@@ -90,6 +99,7 @@ const CategoryList = ({ categories }: CategoryListProps) => {
                         variant='ghost'
                         size='icon'
                         className='size-7'
+                        onClick={() => handleEditClick()}
                       >
                         <Pencil size={15} />
                       </Button>
@@ -116,7 +126,7 @@ const CategoryList = ({ categories }: CategoryListProps) => {
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent align='end'>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditClick()}>
                             <Pencil size={15} />
                             <span>Edit</span>
                           </DropdownMenuItem>
@@ -145,7 +155,10 @@ const CategoryList = ({ categories }: CategoryListProps) => {
         </CardContent>
       </Card>
 
-      <EditCategoryModal />
+      <EditCategoryModal
+        open={isEditModal}
+        onOpenChange={setIsEditModal}
+      />
     </>
   )
 }
