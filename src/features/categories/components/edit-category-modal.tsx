@@ -1,3 +1,5 @@
+import InputForm from '@/components/shared/input-form'
+import SubmitBtn from '@/components/shared/submit-btn'
 import {
   Dialog,
   DialogContent,
@@ -5,13 +7,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { CategoryType } from '@/types/category'
+import { Save } from 'lucide-react'
+import Form from 'next/form'
 
 interface EditCategoryModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  category: CategoryType | null
 }
 
-const EditCategoryModal = ({ open, onOpenChange }: EditCategoryModalProps) => {
+const EditCategoryModal = ({
+  open,
+  onOpenChange,
+  category,
+}: EditCategoryModalProps) => {
   return (
     <Dialog
       open={open}
@@ -25,6 +35,34 @@ const EditCategoryModal = ({ open, onOpenChange }: EditCategoryModalProps) => {
             Update your category information
           </DialogDescription>
         </DialogHeader>
+
+        <Form
+          action=''
+          className='space-y-4'
+        >
+          <input
+            type='hidden'
+            name='category-id'
+            value={category?.id}
+          />
+
+          <div className='space-y-2'>
+            <InputForm
+              label='Category name'
+              id='category-name'
+              placeholder='Enter category name'
+              required
+              defaultValue={category?.name}
+            />
+            {/* Error Message */}
+          </div>
+
+          <SubmitBtn
+            name='Update Category'
+            icon={Save}
+            className='w-full'
+          />
+        </Form>
       </DialogContent>
     </Dialog>
   )

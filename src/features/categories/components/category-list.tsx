@@ -24,8 +24,12 @@ interface CategoryListProps {
 
 const CategoryList = ({ categories }: CategoryListProps) => {
   const [isEditModal, setIsEditModal] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
+    null
+  )
 
-  const handleEditClick = () => {
+  const handleEditClick = (category: CategoryType) => {
+    setSelectedCategory(category)
     setIsEditModal(true)
   }
 
@@ -99,7 +103,7 @@ const CategoryList = ({ categories }: CategoryListProps) => {
                         variant='ghost'
                         size='icon'
                         className='size-7'
-                        onClick={() => handleEditClick()}
+                        onClick={() => handleEditClick(category)}
                       >
                         <Pencil size={15} />
                       </Button>
@@ -126,7 +130,9 @@ const CategoryList = ({ categories }: CategoryListProps) => {
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent align='end'>
-                          <DropdownMenuItem onClick={() => handleEditClick()}>
+                          <DropdownMenuItem
+                            onClick={() => handleEditClick(category)}
+                          >
                             <Pencil size={15} />
                             <span>Edit</span>
                           </DropdownMenuItem>
@@ -158,6 +164,7 @@ const CategoryList = ({ categories }: CategoryListProps) => {
       <EditCategoryModal
         open={isEditModal}
         onOpenChange={setIsEditModal}
+        category={selectedCategory}
       />
     </>
   )
