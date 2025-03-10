@@ -1,20 +1,21 @@
-import InputForm from '@/components/shared/input-form'
-import SubmitBtn from '@/components/shared/submit-btn'
+import InputForm from "@/components/shared/input-form";
+import Modal from "@/components/shared/modal";
+import SubmitBtn from "@/components/shared/submit-btn";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { CategoryType } from '@/types/category'
-import { Save } from 'lucide-react'
-import Form from 'next/form'
+} from "@/components/ui/dialog";
+import { CategoryType } from "@/types/category";
+import { Save } from "lucide-react";
+import Form from "next/form";
 
 interface EditCategoryModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  category: CategoryType | null
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  category: CategoryType | null;
 }
 
 const EditCategoryModal = ({
@@ -23,48 +24,29 @@ const EditCategoryModal = ({
   category,
 }: EditCategoryModalProps) => {
   return (
-    <Dialog
+    <Modal
       open={open}
       onOpenChange={onOpenChange}
+      title="Update Category"
+      description="Update your category information"
     >
-      <DialogContent className='sm:max-w-md'>
-        <DialogHeader>
-          <DialogTitle>Edit Category</DialogTitle>
+      <Form action="" className="space-y-4">
+        <input type="hidden" name="category-id" value={category?.id} />
 
-          <DialogDescription>
-            Update your category information
-          </DialogDescription>
-        </DialogHeader>
-
-        <Form
-          action=''
-          className='space-y-4'
-        >
-          <input
-            type='hidden'
-            name='category-id'
-            value={category?.id}
+        <div className="space-y-2">
+          <InputForm
+            label="Category name"
+            id="category-name"
+            placeholder="Enter category name"
+            required
+            defaultValue={category?.name}
           />
+          {/* Error Message */}
+        </div>
 
-          <div className='space-y-2'>
-            <InputForm
-              label='Category name'
-              id='category-name'
-              placeholder='Enter category name'
-              required
-              defaultValue={category?.name}
-            />
-            {/* Error Message */}
-          </div>
-
-          <SubmitBtn
-            name='Update Category'
-            icon={Save}
-            className='w-full'
-          />
-        </Form>
-      </DialogContent>
-    </Dialog>
-  )
-}
-export default EditCategoryModal
+        <SubmitBtn name="Update Category" icon={Save} className="w-full" />
+      </Form>
+    </Modal>
+  );
+};
+export default EditCategoryModal;
