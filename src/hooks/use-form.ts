@@ -1,34 +1,38 @@
-import { useState, useEffect, useActionState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ActionType, initialFormState } from '@/types/action'
-import { toast } from 'sonner'
+import { useState, useEffect, useActionState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { ActionType, initialFormState } from "@/types/action";
+import { toast } from "sonner";
 
 export const useForm = (action: ActionType, route?: string) => {
-  const [errors, setErrors] = useState<Record<string, string[]>>({})
-  const [state, formAction, isPending] = useActionState(action, initialFormState)
-  const router = useRouter()
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [state, formAction, isPending] = useActionState(
+    action,
+    initialFormState,
+  );
+  const router = useRouter();
 
   useEffect(() => {
-    if (!state) return
+    if (!state) return;
 
-    if (state.errors) setErrors(state.errors)
+    if (state.errors) setErrors(state.errors);
 
     if (state.message) {
       if (state.success) {
-        toast.success(state.message)
-        if (route) router.push(route)
+        toast.success(state.message);
+        if (route) router.push(route);
       } else {
-        toast.error(state.message)
+        toast.error(state.message);
       }
     }
-  }, [state, route, router])
+  }, [state, route, router]);
 
-  const clearErrors = () => setErrors({})
+  const clearErrors = useCallback(() => setErrors({}), []);
 
   return {
+    state,
     errors,
     formAction,
     isPending,
-    clearErrors
-  }
-}
+    clearErrors,
+  };
+};
