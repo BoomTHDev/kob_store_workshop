@@ -16,7 +16,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CategoryType } from "@/types/category";
 import { MoreVertical, Pencil, RefreshCcw, Search, Trash2 } from "lucide-react";
 import EditCategoryModal from "./edit-category-modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteCategoryModal from "./delete-category-modal";
 import RestoreCategoryModal from "./restore-category-modal";
 
@@ -25,12 +25,37 @@ interface CategoryListProps {
 }
 
 const CategoryList = ({ categories }: CategoryListProps) => {
+  // Modal State
   const [isEditModal, setIsEditModal] = useState(false);
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isRestoreModal, setIsRestoreModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
     null,
   );
+
+  const [activeTab, setActiveTab] = useState("all");
+  const [filteredCategories, setFilteredCategories] =
+    useState<CategoryType[]>(categories);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    let result = [...categories];
+
+    if (activeTab === "active") {
+      result = result.filter((c) => c.status === "Active");
+    } else if (activeTab === "inactive") {
+      result = result.filter((c) => c.status === "Inactive");
+    }
+
+    if (searchTerm) {
+      result = result.filter((c) =>
+        c.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
+
+    setFilteredCategories(result);
+  }, [categories, activeTab, searchTerm]);
 
   const handleEditClick = (category: CategoryType) => {
     setSelectedCategory(category);
@@ -47,13 +72,21 @@ const CategoryList = ({ categories }: CategoryListProps) => {
     setIsRestoreModal(true);
   };
 
+  const handleTabActive = (value: string) => {
+    setActiveTab(value);
+  };
+
+  const handleSearchTerm = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
   return (
     <>
       <Card>
         <CardHeader className="pb-4">
           <CardTitle className="text-lg sm:text-xl">Category List</CardTitle>
 
-          <Tabs>
+          <Tabs value={activeTab} onValueChange={handleTabActive}>
             <TabsList className="grid grid-cols-3 mb-4">
               <TabsTrigger value="all">All Categories</TabsTrigger>
               <TabsTrigger value="active">Active</TabsTrigger>
@@ -65,7 +98,12 @@ const CategoryList = ({ categories }: CategoryListProps) => {
                 size={16}
                 className="absolute left-2 top-2.5 text-muted-foreground"
               />
-              <Input placeholder="Search categories..." className="pl-8" />
+              <Input
+                placeholder="Search categories..."
+                className="pl-8"
+                value={searchTerm}
+                onChange={handleSearchTerm}
+              />
             </div>
           </Tabs>
         </CardHeader>
@@ -84,8 +122,8 @@ const CategoryList = ({ categories }: CategoryListProps) => {
           </div>
 
           <ScrollArea className="h-[350px] sm:h-[420px]">
-            {categories.length > 0 ? (
-              categories.map((category, index) => (
+            {filteredCategories.length > 0 ? (
+              filteredCategories.map((category, index) => (
                 <div
                   key={index}
                   className="grid grid-cols-12 py-3 px-2 sm:px-4 border-t items-center hover:bg-gray-50 transition-colors duration-100 text-sm"
