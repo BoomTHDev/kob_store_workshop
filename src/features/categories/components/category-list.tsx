@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CategoryType } from "@/types/category";
-import { MoreVertical, Pencil, Search, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, RefreshCcw, Search, Trash2 } from "lucide-react";
 import EditCategoryModal from "./edit-category-modal";
 import { useState } from "react";
 import DeleteCategoryModal from "./delete-category-modal";
@@ -26,6 +26,7 @@ interface CategoryListProps {
 const CategoryList = ({ categories }: CategoryListProps) => {
   const [isEditModal, setIsEditModal] = useState(false);
   const [isDeleteModal, setIsDeleteModal] = useState(false);
+  const [isRestoreModal, setIsRestoreModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
     null,
   );
@@ -38,6 +39,11 @@ const CategoryList = ({ categories }: CategoryListProps) => {
   const handleDeleteClick = (category: CategoryType) => {
     setSelectedCategory(category);
     setIsDeleteModal(true);
+  };
+
+  const handleRestoreClick = (category: CategoryType) => {
+    setSelectedCategory(category);
+    setIsRestoreModal(true);
   };
 
   return (
@@ -111,14 +117,25 @@ const CategoryList = ({ categories }: CategoryListProps) => {
                       >
                         <Pencil size={15} />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-7"
-                        onClick={() => handleDeleteClick(category)}
-                      >
-                        <Trash2 size={15} />
-                      </Button>
+                      {category.status === "Active" ? (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-7"
+                          onClick={() => handleDeleteClick(category)}
+                        >
+                          <Trash2 size={15} />
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-7"
+                          onClick={() => handleRestoreClick(category)}
+                        >
+                          <RefreshCcw size={15} />
+                        </Button>
+                      )}
                     </div>
 
                     {/* Desktop Action Buttons */}
@@ -144,12 +161,21 @@ const CategoryList = ({ categories }: CategoryListProps) => {
 
                           <DropdownMenuSeparator />
 
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteClick(category)}
-                          >
-                            <Trash2 size={15} className="text-destructive" />
-                            <span className="text-destructive">Delete</span>
-                          </DropdownMenuItem>
+                          {category.status === "Active" ? (
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteClick(category)}
+                            >
+                              <Trash2 size={15} className="text-destructive" />
+                              <span className="text-destructive">Delete</span>
+                            </DropdownMenuItem>
+                          ) : (
+                            <DropdownMenuItem
+                              onClick={() => handleRestoreClick(category)}
+                            >
+                              <Trash2 size={15} className="text-green-600" />
+                              <span className="text-green-600">Restore</span>
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
