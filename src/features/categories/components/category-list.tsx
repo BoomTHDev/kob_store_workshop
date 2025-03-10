@@ -18,6 +18,7 @@ import { MoreVertical, Pencil, RefreshCcw, Search, Trash2 } from "lucide-react";
 import EditCategoryModal from "./edit-category-modal";
 import { useState } from "react";
 import DeleteCategoryModal from "./delete-category-modal";
+import RestoreCategoryModal from "./restore-category-modal";
 
 interface CategoryListProps {
   categories: CategoryType[];
@@ -200,6 +201,12 @@ const CategoryList = ({ categories }: CategoryListProps) => {
       <DeleteCategoryModal
         open={isDeleteModal}
         onOpenChange={setIsDeleteModal}
+        category={selectedCategory}
+      />
+
+      <RestoreCategoryModal
+        open={isRestoreModal}
+        onOpenChange={setIsRestoreModal}
         category={selectedCategory}
       />
     </>
