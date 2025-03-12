@@ -93,14 +93,74 @@ const ProductForm = ({ categories }: ProductFormProps) => {
           <div className="flex flex-col gap-4">
             <h3 className="font-medium">Pricing Information</h3>
 
-            <div>Input</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Cost */}
+              <div className="flex flex-col gap-2">
+                <InputForm
+                  label="Cost Price"
+                  id="cost"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                />
+                {/* Error Message */}
+              </div>
+
+              {/* Base Price */}
+              <div className="flex flex-col gap-2">
+                <InputForm
+                  label="Base Price"
+                  id="base-price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                />
+                {/* Error Message */}
+              </div>
+
+              {/* Sale Price */}
+              <div className="flex flex-col gap-2">
+                <InputForm
+                  label="Sale Price"
+                  id="price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                />
+                {/* Error Message */}
+              </div>
+
+              {/* Discount % */}
+              <div className="flex flex-col gap-2">
+                <Label>Discount</Label>
+                <div className="h-9 px-3 rounded-md border border-input bg-gray-50 flex items-center">
+                  0.00%
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Stock Information */}
           <div className="flex flex-col gap-4">
             <h3 className="font-medium">Stock Information</h3>
 
-            <div>Input</div>
+            {/* Stock */}
+            <div>
+              <InputForm
+                label="Stock Quantity"
+                id="stock"
+                type="number"
+                min="0"
+                placeholder="0"
+                required
+              />
+              {/* Error Message */}
+            </div>
           </div>
         </CardContent>
 
