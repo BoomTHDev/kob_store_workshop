@@ -19,10 +19,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "@/hooks/use-form";
 import { CategoryType } from "@/types/category";
 import { Save } from "lucide-react";
 import Form from "next/form";
 import { useState } from "react";
+import { productAction } from "../actions/products";
+import ErrorMessage from "@/components/shared/error-message";
 
 interface ProductFormProps {
   categories: CategoryType[];
@@ -31,6 +34,13 @@ interface ProductFormProps {
 const ProductForm = ({ categories }: ProductFormProps) => {
   const [basePrice, setBasePrice] = useState("");
   const [salePrice, setSalePrice] = useState("");
+
+  const { errors, formAction, isPending, clearErrors } = useForm(
+    productAction,
+    "/admin/products",
+  );
+
+  console.log(errors);
 
   const calculateDiscount = () => {
     const basePriceNum = parseFloat(basePrice) || 0;
@@ -53,7 +63,11 @@ const ProductForm = ({ categories }: ProductFormProps) => {
         <CardDescription>Enter the details of your new product</CardDescription>
       </CardHeader>
 
-      <Form action="" className="flex flex-col gap-4">
+      <Form
+        action={formAction}
+        onChange={clearErrors}
+        className="flex flex-col gap-4"
+      >
         <CardContent className="flex flex-col gap-6">
           {/* Basic Information */}
           <div className="flex flex-col gap-4">
@@ -68,6 +82,7 @@ const ProductForm = ({ categories }: ProductFormProps) => {
                 required
               />
               {/* Error Mesesage */}
+              {errors.title && <ErrorMessage error={errors.title[0]} />}
             </div>
 
             {/* Product Description */}
@@ -82,6 +97,9 @@ const ProductForm = ({ categories }: ProductFormProps) => {
                 className="min-h-20"
               />
               {/* Error Message */}
+              {errors.description && (
+                <ErrorMessage error={errors.description[0]} />
+              )}
             </div>
 
             {/* Category Selection */}
@@ -103,6 +121,10 @@ const ProductForm = ({ categories }: ProductFormProps) => {
                     ))}
                 </SelectContent>
               </Select>
+              {/* Error Message */}
+              {errors.categoryId && (
+                <ErrorMessage error={errors.categoryId[0]} />
+              )}
             </div>
           </div>
 
@@ -122,6 +144,7 @@ const ProductForm = ({ categories }: ProductFormProps) => {
                   placeholder="0.00"
                 />
                 {/* Error Message */}
+                {errors.cost && <ErrorMessage error={errors.cost[0]} />}
               </div>
 
               {/* Base Price */}
@@ -138,6 +161,9 @@ const ProductForm = ({ categories }: ProductFormProps) => {
                   onChange={(event) => setBasePrice(event.target.value)}
                 />
                 {/* Error Message */}
+                {errors.basePrice && (
+                  <ErrorMessage error={errors.basePrice[0]} />
+                )}
               </div>
 
               {/* Sale Price */}
@@ -154,6 +180,7 @@ const ProductForm = ({ categories }: ProductFormProps) => {
                   onChange={(event) => setSalePrice(event.target.value)}
                 />
                 {/* Error Message */}
+                {errors.price && <ErrorMessage error={errors.price[0]} />}
               </div>
 
               {/* Discount % */}
@@ -181,12 +208,18 @@ const ProductForm = ({ categories }: ProductFormProps) => {
                 required
               />
               {/* Error Message */}
+              {errors.stock && <ErrorMessage error={errors.stock[0]} />}
             </div>
           </div>
         </CardContent>
 
         <CardFooter>
-          <SubmitBtn name="Save Product" icon={Save} className="w-full" />
+          <SubmitBtn
+            name="Save Product"
+            icon={Save}
+            className="w-full"
+            pending={isPending}
+          />
         </CardFooter>
       </Form>
     </Card>

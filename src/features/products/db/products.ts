@@ -5,6 +5,9 @@ import {
 } from "next/cache";
 import { getProductGlobalTag, revalidateProductCache } from "./cache";
 import { createProductSchema } from "../schemas/products";
+import { authCheck } from "@/features/auths/db/auths";
+import { canCreateProduct } from "../permissions/products";
+import { redirect } from "next/navigation";
 
 interface CreateProductInput {
   title: string;
@@ -47,6 +50,11 @@ export const getProducts = async () => {
 };
 
 export const createProduct = async (input: CreateProductInput) => {
+  const user = await authCheck();
+  if (!user || !canCreateProduct(user)) {
+    redirect("/");
+  }
+
   try {
     const { success, data, error } = createProductSchema.safeParse(input);
 
