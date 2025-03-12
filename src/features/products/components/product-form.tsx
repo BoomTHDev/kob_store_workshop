@@ -1,3 +1,5 @@
+"use client";
+
 import InputForm from "@/components/shared/input-form";
 import SubmitBtn from "@/components/shared/submit-btn";
 import {
@@ -20,13 +22,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { CategoryType } from "@/types/category";
 import { Save } from "lucide-react";
 import Form from "next/form";
+import { useState } from "react";
 
 interface ProductFormProps {
   categories: CategoryType[];
 }
 
 const ProductForm = ({ categories }: ProductFormProps) => {
-  console.log(categories);
+  const [basePrice, setBasePrice] = useState("");
+  const [salePrice, setSalePrice] = useState("");
+
+  const calculateDiscount = () => {
+    const basePriceNum = parseFloat(basePrice) || 0;
+    const salePriceNum = parseFloat(salePrice) || 0;
+
+    if (basePriceNum === 0 || salePriceNum === 0) return "0%";
+    if (basePriceNum <= salePriceNum) return "0%";
+
+    const discount = ((basePriceNum - salePriceNum) / basePriceNum) * 100;
+
+    return `${discount.toFixed(2)}%`;
+  };
+
   return (
     <Card className="max-w-4xl mx-auto">
       <CardHeader>
@@ -117,6 +134,8 @@ const ProductForm = ({ categories }: ProductFormProps) => {
                   step="0.01"
                   placeholder="0.00"
                   required
+                  value={basePrice}
+                  onChange={(event) => setBasePrice(event.target.value)}
                 />
                 {/* Error Message */}
               </div>
@@ -131,6 +150,8 @@ const ProductForm = ({ categories }: ProductFormProps) => {
                   step="0.01"
                   placeholder="0.00"
                   required
+                  value={salePrice}
+                  onChange={(event) => setSalePrice(event.target.value)}
                 />
                 {/* Error Message */}
               </div>
@@ -139,7 +160,7 @@ const ProductForm = ({ categories }: ProductFormProps) => {
               <div className="flex flex-col gap-2">
                 <Label>Discount</Label>
                 <div className="h-9 px-3 rounded-md border border-input bg-gray-50 flex items-center">
-                  0.00%
+                  {calculateDiscount()}
                 </div>
               </div>
             </div>
