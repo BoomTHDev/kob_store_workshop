@@ -26,6 +26,7 @@ import Form from "next/form";
 import { useState } from "react";
 import { productAction } from "../actions/products";
 import ErrorMessage from "@/components/shared/error-message";
+import ProductImageUpload from "./product-image-upload";
 
 interface ProductFormProps {
   categories: CategoryType[];
@@ -39,8 +40,6 @@ const ProductForm = ({ categories }: ProductFormProps) => {
     productAction,
     "/admin/products",
   );
-
-  console.log(errors);
 
   const calculateDiscount = () => {
     const basePriceNum = parseFloat(basePrice) || 0;
@@ -128,6 +127,9 @@ const ProductForm = ({ categories }: ProductFormProps) => {
             </div>
           </div>
 
+          {/* Product Image Section */}
+          <ProductImageUpload />
+
           {/* Pricing Information */}
           <div className="flex flex-col gap-4">
             <h3 className="font-medium">Pricing Information</h3>
@@ -176,7 +178,7 @@ const ProductForm = ({ categories }: ProductFormProps) => {
                   step="0.01"
                   placeholder="0.00"
                   required
-                  value={salePrice}
+                  defaultValue={basePrice}
                   onChange={(event) => setSalePrice(event.target.value)}
                 />
                 {/* Error Message */}

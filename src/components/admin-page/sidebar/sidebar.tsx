@@ -87,7 +87,7 @@ const SidebarAdmin = ({ user }: SidebarAdminProps) => {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col h-[calc(100vw-128px)] overflow-y-auto">
+        <div className="flex-1 flex flex-col h-[calc(100vh-128px)] overflow-y-auto">
           <ScrollArea className="flex-1">
             <div className="p-4">
               {/* Profile Box */}
