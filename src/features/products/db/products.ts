@@ -37,6 +37,12 @@ export const getProducts = async () => {
             status: true,
           },
         },
+        images: {
+          where: {
+            isMain: true,
+          },
+          take: 1,
+        },
       },
     });
 
@@ -44,6 +50,7 @@ export const getProducts = async () => {
       ...product,
       lowStock: 5,
       sku: product.id.substring(0, 8).toUpperCase(),
+      mainImage: product.images.length > 0 ? product.images[0] : null,
     }));
   } catch (error) {
     console.error("Error getting products:", error);
