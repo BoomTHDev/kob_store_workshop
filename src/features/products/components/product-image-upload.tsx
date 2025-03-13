@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { ImagePlus, Star, Trash2 } from "lucide-react";
+import { ImagePlus, Plus, Star, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
@@ -39,6 +39,22 @@ const ProductImageUpload = () => {
     // Reset Input
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+  };
+
+  const handleSetMain = (index: number) => {
+    setMainImageIndex(index);
+  };
+
+  const handleRemoveImage = (index: number) => {
+    URL.revokeObjectURL(previewUrls[index]);
+    const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
+    setPreviewUrls(newPreviewUrls);
+
+    if (mainImageIndex === index) {
+      setMainImageIndex(0);
+    } else if (mainImageIndex > index) {
+      setMainImageIndex((prev) => prev - 1);
     }
   };
 
@@ -80,6 +96,7 @@ const ProductImageUpload = () => {
                   type="button"
                   variant="secondary"
                   className="size-6 sm:size-8 rounded-full"
+                  onClick={() => handleSetMain(index)}
                 >
                   <Star
                     size={16}
@@ -89,12 +106,28 @@ const ProductImageUpload = () => {
                     })}
                   />
                 </Button>
-                <Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className="size-6 sm:size-8 rounded-full"
+                  onClick={() => handleRemoveImage(index)}
+                >
                   <Trash2 size={16} />
                 </Button>
               </div>
             </div>
           ))}
+
+          {/* Add More Button */}
+          <div
+            className="aspect-square border rounded-md flex items-center justify-center cursor-pointer hover:bg-muted transition-colors"
+            onClick={triggerFileInput}
+          >
+            <div className="flex flex-col items-center gap-1 text-muted-foreground">
+              <Plus size={24} />
+              <span className="text-xs">Add Image</span>
+            </div>
+          </div>
         </div>
       )}
 
