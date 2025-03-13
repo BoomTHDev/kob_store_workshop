@@ -17,6 +17,8 @@ interface CreateProductInput {
   price: number;
   stock: number;
   categoryId: string;
+  mainImageIndex: number;
+  images: Array<{ url: string; fileId: string }>;
 }
 
 export const getProducts = async () => {
@@ -80,16 +82,35 @@ export const createProduct = async (input: CreateProductInput) => {
     }
 
     // Create new product
-    const newProduct = await db.product.create({
-      data: {
-        title: data.title,
-        description: data.description,
-        cost: data.cost,
-        basePrice: data.basePrice,
-        price: data.price,
-        stock: data.stock,
-        categoryId: data.categoryId,
-      },
+    const newProduct = await db.$transaction(async (prisma) => {
+      const product = await prisma.product.create({
+        data: {
+          title: data.title,
+          description: data.description,
+          cost: data.cost,
+          basePrice: data.basePrice,
+          price: data.price,
+          stock: data.stock,
+          categoryId: data.categoryId,
+        },
+      });
+
+      if (input.images && input.images.length > 0) {
+        await Promise.all(
+          input.images.map((image, index) => {
+            return prisma.productImage.create({
+              data: {
+                url: image.url,
+                fileId: image.fileId,
+                isMain: input.mainImageIndex === index,
+                productId: product.id,
+              },
+            });
+          }),
+        );
+      }
+
+      return product;
     });
 
     revalidateProductCache(newProduct.id);

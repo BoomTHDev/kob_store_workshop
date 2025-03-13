@@ -41,9 +41,6 @@ const ProductForm = ({ categories }: ProductFormProps) => {
   const [productImages, setProductImages] = useState<File[]>([]);
   const [mainImageIndex, setMainImageIndex] = useState(0);
 
-  console.log(productImages);
-  console.log(mainImageIndex);
-
   const { errors, formAction, isPending, clearErrors } = useForm(
     productAction,
     "/admin/products",
@@ -66,6 +63,17 @@ const ProductForm = ({ categories }: ProductFormProps) => {
     setMainImageIndex(mainIndex);
   };
 
+  const handleSubmit = async (formData: FormData) => {
+    if (productImages.length > 0) {
+      productImages.forEach((file) => {
+        formData.append("images", file);
+      });
+      formData.append("main-image-index", mainImageIndex.toString());
+    }
+
+    return formAction(formData);
+  };
+
   return (
     <Card className="max-w-4xl mx-auto">
       <CardHeader>
@@ -76,7 +84,7 @@ const ProductForm = ({ categories }: ProductFormProps) => {
       </CardHeader>
 
       <Form
-        action={formAction}
+        action={handleSubmit}
         onChange={clearErrors}
         className="flex flex-col gap-4"
       >
