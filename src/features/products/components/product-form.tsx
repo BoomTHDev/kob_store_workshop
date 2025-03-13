@@ -33,8 +33,16 @@ interface ProductFormProps {
 }
 
 const ProductForm = ({ categories }: ProductFormProps) => {
+  // Price State
   const [basePrice, setBasePrice] = useState("");
   const [salePrice, setSalePrice] = useState("");
+
+  // Image State
+  const [productImages, setProductImages] = useState<File[]>([]);
+  const [mainImageIndex, setMainImageIndex] = useState(0);
+
+  console.log(productImages);
+  console.log(mainImageIndex);
 
   const { errors, formAction, isPending, clearErrors } = useForm(
     productAction,
@@ -51,6 +59,11 @@ const ProductForm = ({ categories }: ProductFormProps) => {
     const discount = ((basePriceNum - salePriceNum) / basePriceNum) * 100;
 
     return `${discount.toFixed(2)}%`;
+  };
+
+  const handleImageChange = (images: File[], mainIndex: number) => {
+    setProductImages(images);
+    setMainImageIndex(mainIndex);
   };
 
   return (
@@ -128,7 +141,7 @@ const ProductForm = ({ categories }: ProductFormProps) => {
           </div>
 
           {/* Product Image Section */}
-          <ProductImageUpload />
+          <ProductImageUpload onImageChange={handleImageChange} />
 
           {/* Pricing Information */}
           <div className="flex flex-col gap-4">

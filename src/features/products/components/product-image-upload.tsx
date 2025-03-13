@@ -8,9 +8,14 @@ import { ImagePlus, Plus, Star, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-const ProductImageUpload = () => {
+interface ProductImageUploadProps {
+  onImageChange: (images: File[], mainIndex: number) => void;
+}
+
+const ProductImageUpload = ({ onImageChange }: ProductImageUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [selectedFile, setSelectedFile] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [mainImageIndex, setMainImageIndex] = useState(0);
 
@@ -31,10 +36,13 @@ const ProductImageUpload = () => {
     // Create preview URLs
     const newPreviewUrls = imageFiles.map((file) => URL.createObjectURL(file));
     setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
+    setSelectedFile((prev) => [...prev, ...imageFiles]);
 
     if (newPreviewUrls.length > 0) {
       setMainImageIndex(0);
     }
+
+    onImageChange([...selectedFile, ...imageFiles], mainImageIndex);
 
     // Reset Input
     if (fileInputRef.current) {
@@ -44,18 +52,34 @@ const ProductImageUpload = () => {
 
   const handleSetMain = (index: number) => {
     setMainImageIndex(index);
+    onImageChange(selectedFile, index);
   };
 
   const handleRemoveImage = (index: number) => {
+    const newFiles = selectedFile.filter((_, i) => i !== index);
+
     URL.revokeObjectURL(previewUrls[index]);
     const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
     setPreviewUrls(newPreviewUrls);
+    setSelectedFile(newFiles);
 
     if (mainImageIndex === index) {
       setMainImageIndex(0);
     } else if (mainImageIndex > index) {
       setMainImageIndex((prev) => prev - 1);
     }
+
+    const setMainIndexForParent = () => {
+      if (mainImageIndex === index) {
+        return 0;
+      } else if (mainImageIndex > index) {
+        return mainImageIndex - 1;
+      } else {
+        return mainImageIndex;
+      }
+    };
+
+    onImageChange(newFiles, setMainIndexForParent());
   };
 
   return (
