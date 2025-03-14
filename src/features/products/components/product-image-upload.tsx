@@ -115,10 +115,10 @@ const ProductImageUpload = ({
       setSelectedFile(selectedFile.filter((_, i) => i !== index));
 
       const actualRemovedIndex = existingImagesState.length + index;
-      if (mainImageIndex === index) {
+      if (mainImageIndex === actualRemovedIndex) {
         if (existingImagesState.length > 0) {
           setMainImageIndex(0);
-        } else if (selectedFile.length > 0) {
+        } else if (previewUrls.length > 0) {
           setMainImageIndex(0);
         } else {
           setMainImageIndex(-1);
