@@ -3,7 +3,11 @@ import {
   unstable_cacheLife as cacheLife,
   unstable_cacheTag as cacheTag,
 } from "next/cache";
-import { getProductGlobalTag, revalidateProductCache } from "./cache";
+import {
+  getProductGlobalTag,
+  getProductIdTag,
+  revalidateProductCache,
+} from "./cache";
 import { createProductSchema } from "../schemas/products";
 import { authCheck } from "@/features/auths/db/auths";
 import { canCreateProduct } from "../permissions/products";
@@ -55,6 +59,51 @@ export const getProducts = async () => {
   } catch (error) {
     console.error("Error getting products:", error);
     return [];
+  }
+};
+
+export const getProductById = async (id: string) => {
+  "use cache";
+
+  cacheLife("hours");
+  cacheTag(getProductIdTag(id));
+
+  try {
+    const product = await db.product.findFirst({
+      where: { id },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+          },
+        },
+        images: true,
+      },
+    });
+
+    if (!product) {
+      return null;
+    }
+
+    // หารูปภาพหลักของสินค้า
+    const mainImage = product.images.find((image) => image.isMain);
+    // หา index ของรูปภาพหลัก
+    const mainImageIndex = mainImage
+      ? product.images.findIndex((image) => image.isMain)
+      : 0;
+
+    return {
+      ...product,
+      lowStock: 5,
+      sku: product.id.substring(0, 8).toUpperCase(),
+      mainImage: mainImage || null,
+      mainImageIndex,
+    };
+  } catch (error) {
+    console.error("Error getting product by id:", error);
+    return null;
   }
 };
 
