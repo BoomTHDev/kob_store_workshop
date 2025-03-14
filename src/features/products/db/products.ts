@@ -10,7 +10,7 @@ import {
 } from "./cache";
 import { productSchema } from "../schemas/products";
 import { authCheck } from "@/features/auths/db/auths";
-import { canCreateProduct } from "../permissions/products";
+import { canCreateProduct, canUpdateProduct } from "../permissions/products";
 import { redirect } from "next/navigation";
 import { deleteFromImageKit } from "@/lib/imageKit";
 
@@ -185,6 +185,11 @@ export const updateProduct = async (
     deletedImageIds: string[];
   },
 ) => {
+  const user = await authCheck();
+  if (!user || !canUpdateProduct(user)) {
+    redirect("/");
+  }
+
   try {
     const { success, data, error } = productSchema.safeParse(input);
 
