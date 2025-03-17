@@ -1,10 +1,17 @@
 import Modal from "@/components/shared/modal";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductType } from "@/types/product";
 import { TabsContent } from "@radix-ui/react-tabs";
-import { Clock, Package, Tag } from "lucide-react";
+import {
+  Clock,
+  DollarSign,
+  FileText,
+  Package,
+  ShoppingBag,
+  Tag,
+} from "lucide-react";
 import Image from "next/image";
 import dayjs from "@/lib/dayjs";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -81,7 +88,7 @@ const ProductDetailModal = ({
 
           <TabsContent value="overview">
             <ScrollArea className="max-h-[500px] overflow-y-auto">
-              <Card>
+              <Card className="mb-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
                   {/* Main Image */}
                   <div className="relative aspect-square border rounded-md overflow-hidden group">
@@ -168,6 +175,46 @@ const ProductDetailModal = ({
                     </div>
                   </div>
                 </div>
+              </Card>
+
+              <Card>
+                <CardContent className="p-4">
+                  <h3 className="text-sm font-semibold mb-2">
+                    Sales statistics
+                  </h3>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="flex flex-col items-center justify-center bg-muted rounded-md p-2">
+                      <ShoppingBag size={20} className="text-primary mb-1" />
+                      <span className="font-bold">{product.sold}</span>
+                      <span className="text-xs text-muted-foreground">
+                        Sales
+                      </span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center bg-muted rounded-md p-2">
+                      <DollarSign size={20} className="text-emerald-500 mb-1" />
+                      <span className="font-bold">
+                        {formatPrice(product.sold * product.price)}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        Income
+                      </span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center bg-muted rounded-md p-2">
+                      <FileText size={20} className="text-emerald-500 mb-1" />
+                      <span className="font-bold">
+                        {product.cost > 0
+                          ? formatPrice(
+                              product.sold * (product.price - product.cost),
+                            )
+                          : "N/A"}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        Profit
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
               </Card>
             </ScrollArea>
           </TabsContent>
