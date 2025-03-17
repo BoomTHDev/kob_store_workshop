@@ -4,9 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductType } from "@/types/product";
 import { TabsContent } from "@radix-ui/react-tabs";
-import { Clock, Tag } from "lucide-react";
+import { Clock, Package, Tag } from "lucide-react";
 import Image from "next/image";
 import dayjs from "@/lib/dayjs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ProductDetailModalProps {
   open: boolean;
@@ -22,6 +23,28 @@ const ProductDetailModal = ({
   if (!product) return null;
 
   const formattedDate = dayjs(product.createdAt).fromNow();
+
+  const stockColor = (() => {
+    switch (true) {
+      case product.stock <= 0:
+        return "text-red-600";
+      case product.stock <= product.lowStock:
+        return "text-amber-500";
+      default:
+        return "text-green-600";
+    }
+  })();
+
+  const stockStatus = (() => {
+    switch (true) {
+      case product.stock <= 0:
+        return "Out of stock";
+      case product.stock <= product.lowStock:
+        return "Low stock";
+      default:
+        return "In stock";
+    }
+  })();
 
   return (
     <Modal
@@ -42,50 +65,68 @@ const ProductDetailModal = ({
           </TabsList>
 
           <TabsContent value="overview">
-            <Card>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
-                {/* Main Image */}
-                <div className="relative aspect-square border rounded-md overflow-hidden group">
-                  <Image
-                    alt={product.title}
-                    src={
-                      product.mainImage?.url || "/images/no-product-image.webp"
-                    }
-                    fill
-                    className="object-cover transition-transform group-hover:scale-105"
-                  />
-                </div>
-
-                {/* Product Info */}
-                <div className="p-4 flex flex-col">
-                  <div className="mb-2 flex items-center justify-between">
-                    <Badge
-                      variant={
-                        product.status === "Active" ? "default" : "destructive"
+            <ScrollArea className="max-h-[500px] overflow-y-auto">
+              <Card>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
+                  {/* Main Image */}
+                  <div className="relative aspect-square border rounded-md overflow-hidden group">
+                    <Image
+                      alt={product.title}
+                      src={
+                        product.mainImage?.url ||
+                        "/images/no-product-image.webp"
                       }
-                    >
-                      {product.status}
-                    </Badge>
-                    <Badge
-                      variant="outline"
-                      className="flex items-center gap-1"
-                    >
-                      <Tag size={12} />
-                      <span>{product.category.name}</span>
-                    </Badge>
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105"
+                    />
                   </div>
 
-                  <h2 className="text-xl font-bold line-clamp-2 mb-1">
-                    {product.title}
-                  </h2>
+                  {/* Product Info */}
+                  <div className="p-4 flex flex-col">
+                    <div className="mb-2 flex items-center justify-between">
+                      <Badge
+                        variant={
+                          product.status === "Active"
+                            ? "default"
+                            : "destructive"
+                        }
+                      >
+                        {product.status}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1"
+                      >
+                        <Tag size={12} />
+                        <span>{product.category.name}</span>
+                      </Badge>
+                    </div>
 
-                  <div>
-                    <Clock size={12} />
-                    <span>Added {formattedDate}</span>
+                    <h2 className="text-xl font-bold line-clamp-2 mb-1">
+                      {product.title}
+                    </h2>
+
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+                      <Clock size={12} />
+                      <span>Added {formattedDate}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="flex items-center gap-1">
+                        <Package size={14} />
+                        <span className={`text-sm font-medium ${stockColor}`}>
+                          {stockStatus}
+                        </span>
+                      </div>
+
+                      <span className="text-sm text-muted-foreground">
+                        {product.stock} items left
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Card>
+              </Card>
+            </ScrollArea>
           </TabsContent>
 
           <TabsContent value="details">Details</TabsContent>
