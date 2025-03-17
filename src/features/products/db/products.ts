@@ -13,6 +13,7 @@ import { authCheck } from "@/features/auths/db/auths";
 import { canCreateProduct, canUpdateProduct } from "../permissions/products";
 import { redirect } from "next/navigation";
 import { deleteFromImageKit } from "@/lib/imageKit";
+import { ProductStatus } from "@prisma/client";
 
 interface CreateProductInput {
   title: string;
@@ -319,6 +320,41 @@ export const updateProduct = async (
     revalidateProductCache(updatedProduct.id);
   } catch (error) {
     console.error("Error updating product:", error);
+    return {
+      message: "Something went wrong. Please try again later",
+    };
+  }
+};
+
+export const changeProductStatus = async (
+  id: string,
+  status: ProductStatus,
+) => {
+  try {
+    const product = await db.product.findUnique({
+      where: { id },
+    });
+
+    if (!product) {
+      return {
+        message: "Product not found",
+      };
+    }
+
+    if (product.status === status) {
+      return {
+        message: `Product is already ${status.toLowerCase()}`,
+      };
+    }
+
+    const updatedProduct = await db.product.update({
+      where: { id },
+      data: { status },
+    });
+
+    revalidateProductCache(updatedProduct.id);
+  } catch (error) {
+    console.error("Error changing product status:", error);
     return {
       message: "Something went wrong. Please try again later",
     };
