@@ -44,6 +44,7 @@ interface ProductListProps {
 const ProductList = ({ products }: ProductListProps) => {
   const [activeTab, setActiveTab] = useState("all");
   const [filteredProducts, setFillteredProducts] = useState(products);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Modal State
   const [isDeleteModal, setIsDeleteModal] = useState(false);
@@ -62,11 +63,21 @@ const ProductList = ({ products }: ProductListProps) => {
       result = result.filter((p) => p.stock <= p.lowStock);
     }
 
+    if (searchTerm) {
+      result = result.filter((p) =>
+        p.title.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
+
     setFillteredProducts(result);
-  }, [products, activeTab]);
+  }, [products, activeTab, searchTerm]);
 
   const hadleTabChange = (value: string) => {
     setActiveTab(value);
+  };
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
   };
 
   const handleDeleteClick = (product: ProductType) => {
@@ -134,7 +145,11 @@ const ProductList = ({ products }: ProductListProps) => {
                   size={16}
                   className="absolute left-2 top-2.5 text-muted-foreground"
                 />
-                <Input placeholder="Search products..." className="pl-8" />
+                <Input
+                  placeholder="Search products..."
+                  className="pl-8"
+                  onChange={(event) => handleSearch(event)}
+                />
               </div>
             </div>
           </Tabs>
