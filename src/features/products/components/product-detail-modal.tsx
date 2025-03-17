@@ -12,12 +12,14 @@ const ProductDetailModal = ({
   onOpenChange,
   product,
 }: ProductDetailModalProps) => {
+  if (!product) return null;
+
   return (
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={product?.title}
-      description={`SKU: ${product?.sku}`}
+      title={product.title}
+      description={`SKU: ${product.sku}`}
     >
       Test
     </Modal>
