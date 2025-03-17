@@ -8,6 +8,7 @@ import { Clock, Package, Tag } from "lucide-react";
 import Image from "next/image";
 import dayjs from "@/lib/dayjs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductDetailModalProps {
   open: boolean;
@@ -45,6 +46,20 @@ const ProductDetailModal = ({
         return "In stock";
     }
   })();
+
+  const discount =
+    product.basePrice > product.price
+      ? (
+          ((product.basePrice - product.price) / product.basePrice) *
+          100
+        ).toFixed(2)
+      : "0";
+
+  const profitPerUnit = product.cost > 0 ? product.price - product.cost : 0;
+  const profitMargin =
+    product.cost > 0
+      ? ((profitPerUnit / product.cost) * 100).toFixed(2)
+      : "N/A";
 
   return (
     <Modal
@@ -122,6 +137,34 @@ const ProductDetailModal = ({
                       <span className="text-sm text-muted-foreground">
                         {product.stock} items left
                       </span>
+                    </div>
+
+                    <div className="mt-auto">
+                      <div className="flex flex-wrap items-baseline gap-2 mb-1">
+                        <span>{formatPrice(product.price)}</span>
+
+                        {product.basePrice > product.price && (
+                          <div className="flex items-center gap-1">
+                            <span className="text-sm line-through text-muted-foreground">
+                              {formatPrice(product.basePrice)}
+                            </span>
+                            <Badge variant="secondary" className="text-xs">
+                              {discount}% off
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
+
+                      {product.cost > 0 && (
+                        <div className="flex gap-2 text-xs text-muted-foreground">
+                          <span>Cost: {formatPrice(product.cost)}</span>
+                          <span>•</span>
+                          <span>
+                            Profit: {formatPrice(profitPerUnit)} ({profitMargin}
+                            %)
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
