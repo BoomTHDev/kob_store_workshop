@@ -35,6 +35,7 @@ import Image from "next/image";
 import Link from "next/link";
 import DeleteProductModal from "./delete-product-modal";
 import { useState } from "react";
+import RestoreProductModal from "./restore-product-modal";
 
 interface ProductListProps {
   products: ProductType[];
@@ -42,6 +43,7 @@ interface ProductListProps {
 
 const ProductList = ({ products }: ProductListProps) => {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
+  const [isRestoreModal, setIsRestoreModal] = useState(false);
 
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
     null,
@@ -50,6 +52,11 @@ const ProductList = ({ products }: ProductListProps) => {
   const handleDeleteClick = (product: ProductType) => {
     setSelectedProduct(product);
     setIsDeleteModal(true);
+  };
+
+  const handleRestoreClick = (product: ProductType) => {
+    setSelectedProduct(product);
+    setIsRestoreModal(true);
   };
 
   return (
@@ -221,7 +228,9 @@ const ProductList = ({ products }: ProductListProps) => {
                               <span className="text-destructive">Delete</span>
                             </DropdownMenuItem>
                           ) : (
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleRestoreClick(product)}
+                            >
                               <RefreshCcw
                                 size={15}
                                 className="text-green-600"
@@ -252,6 +261,12 @@ const ProductList = ({ products }: ProductListProps) => {
       <DeleteProductModal
         open={isDeleteModal}
         onOpenChange={setIsDeleteModal}
+        product={selectedProduct}
+      />
+
+      <RestoreProductModal
+        open={isRestoreModal}
+        onOpenChange={setIsRestoreModal}
         product={selectedProduct}
       />
     </>
