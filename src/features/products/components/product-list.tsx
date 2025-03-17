@@ -36,6 +36,7 @@ import Link from "next/link";
 import DeleteProductModal from "./delete-product-modal";
 import { useEffect, useState } from "react";
 import RestoreProductModal from "./restore-product-modal";
+import ProductDetailModal from "./product-detail-modal";
 
 interface ProductListProps {
   products: ProductType[];
@@ -49,6 +50,7 @@ const ProductList = ({ products }: ProductListProps) => {
   // Modal State
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isRestoreModal, setIsRestoreModal] = useState(false);
+  const [isDetailModal, setIsDetailModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
     null,
   );
@@ -88,6 +90,11 @@ const ProductList = ({ products }: ProductListProps) => {
   const handleRestoreClick = (product: ProductType) => {
     setSelectedProduct(product);
     setIsRestoreModal(true);
+  };
+
+  const handleDetailClick = (product: ProductType) => {
+    setSelectedProduct(product);
+    setIsDetailModal(true);
   };
 
   return (
@@ -238,7 +245,9 @@ const ProductList = ({ products }: ProductListProps) => {
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDetailClick(product)}
+                          >
                             <Eye size={15} />
                             <span>View</span>
                           </DropdownMenuItem>
@@ -298,6 +307,12 @@ const ProductList = ({ products }: ProductListProps) => {
       <RestoreProductModal
         open={isRestoreModal}
         onOpenChange={setIsRestoreModal}
+        product={selectedProduct}
+      />
+
+      <ProductDetailModal
+        open={isDetailModal}
+        onOpenChange={setIsDetailModal}
         product={selectedProduct}
       />
     </>
