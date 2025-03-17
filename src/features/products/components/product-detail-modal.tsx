@@ -8,6 +8,7 @@ import {
   Clock,
   DollarSign,
   FileText,
+  ImageIcon,
   Package,
   ShoppingBag,
   Tag,
@@ -337,7 +338,52 @@ const ProductDetailModal = ({
               </Card>
             </ScrollArea>
           </TabsContent>
-          <TabsContent value="images">Images</TabsContent>
+
+          <TabsContent value="images">
+            <ScrollArea className="max-h-[500px] overflow-y-auto">
+              <Card>
+                <CardContent>
+                  <h3 className="text-sm font-semibold mb-3">
+                    All images ({product.images.length} photos)
+                  </h3>
+
+                  {product.images.length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {product.images.map((image, index) => (
+                        <div
+                          key={index}
+                          className="relative aspect-square border rounded-md overflow-hidden cursor-pointer group"
+                        >
+                          <Image
+                            alt={`Product image ${index + 1}`}
+                            src={image.url}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          {image.isMain && (
+                            <Badge className="absolute top-1 left-1 text-[10px] z-10">
+                              Main
+                            </Badge>
+                          )}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-10 bg-muted/50 rounded-md">
+                      <ImageIcon
+                        size={40}
+                        className="text-muted-foreground mb-2 opacity-40"
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        There are no images for this product.
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </ScrollArea>
+          </TabsContent>
         </Tabs>
       </div>
     </Modal>
