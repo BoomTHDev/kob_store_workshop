@@ -4,8 +4,9 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductType } from "@/types/product";
 import { TabsContent } from "@radix-ui/react-tabs";
-import { Tag } from "lucide-react";
+import { Clock, Tag } from "lucide-react";
 import Image from "next/image";
+import dayjs from "@/lib/dayjs";
 
 interface ProductDetailModalProps {
   open: boolean;
@@ -19,6 +20,8 @@ const ProductDetailModal = ({
   product,
 }: ProductDetailModalProps) => {
   if (!product) return null;
+
+  const formattedDate = dayjs(product.createdAt).fromNow();
 
   return (
     <Modal
@@ -75,6 +78,11 @@ const ProductDetailModal = ({
                   <h2 className="text-xl font-bold line-clamp-2 mb-1">
                     {product.title}
                   </h2>
+
+                  <div>
+                    <Clock size={12} />
+                    <span>Added {formattedDate}</span>
+                  </div>
                 </div>
               </div>
             </Card>
