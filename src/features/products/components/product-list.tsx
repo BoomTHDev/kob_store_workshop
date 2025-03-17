@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,12 +33,25 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import DeleteProductModal from "./delete-product-modal";
+import { useState } from "react";
 
 interface ProductListProps {
   products: ProductType[];
 }
 
 const ProductList = ({ products }: ProductListProps) => {
+  const [isDeleteModal, setIsDeleteModal] = useState(false);
+
+  const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
+    null,
+  );
+
+  const handleDeleteClick = (product: ProductType) => {
+    setSelectedProduct(product);
+    setIsDeleteModal(true);
+  };
+
   return (
     <>
       <Card>
@@ -199,7 +214,9 @@ const ProductList = ({ products }: ProductListProps) => {
                           <DropdownMenuSeparator />
 
                           {product.status === "Active" ? (
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteClick(product)}
+                            >
                               <Trash2 size={15} className="text-destructive" />
                               <span className="text-destructive">Delete</span>
                             </DropdownMenuItem>
@@ -231,6 +248,12 @@ const ProductList = ({ products }: ProductListProps) => {
           </Table>
         </CardContent>
       </Card>
+
+      <DeleteProductModal
+        open={isDeleteModal}
+        onOpenChange={setIsDeleteModal}
+        product={selectedProduct}
+      />
     </>
   );
 };
