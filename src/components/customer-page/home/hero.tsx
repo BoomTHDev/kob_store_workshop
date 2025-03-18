@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ShoppingBag, Sparkle } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export const Hero = () => {
@@ -49,7 +50,41 @@ export const Hero = () => {
               </Button>
             </div>
           </div>
+
           {/* Right Content */}
+          <div className="hidden md:block relative">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="size-[400px] lg:size-[500px] rounded-full bg-primary/10" />
+              <div className="absolute size-[320px] lg:size-[400px] rounded-full border-2 border-primary/20" />
+            </div>
+
+            <div className="relative z-10 flex items-center">
+              <div className="relative size-[400px]">
+                <Image
+                  alt="Tech Gadgets"
+                  src="/images/Banner.webp"
+                  fill
+                  className="object-cover rounded-lg scale-110 hover:scale-105 hover:shadow-primary hover:shadow-md transition-all duration-700"
+                />
+
+                <div className="absolute -top-5 -right-10 p-3 bg-card rounded-lg shadow-lg border border-border/70">
+                  <div className="flex items-center gap-2">
+                    <span className="size-3 rounded-full bg-blue-500" />
+                    <span className="text-xs font-medium">
+                      รับประกัน 1 ปีเต็ม
+                    </span>
+                  </div>
+                </div>
+
+                <div className="absolute -bottom-5 -left-10 p-3 bg-card rounded-lg shadow-lg border border-border/70">
+                  <div className="flex items-center gap-2">
+                    <span className="size-3 rounded-full bg-green-500" />
+                    <span className="text-xs font-medium">ลดสูงสุด 50%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
