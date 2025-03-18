@@ -13,6 +13,11 @@ interface AddToCartInput {
   count: number;
 }
 
+interface UpdateCartInput {
+  cartItemId: string;
+  newCount: number;
+}
+
 export const getUserCart = async (userId: string | null) => {
   "use cache";
 
@@ -25,6 +30,9 @@ export const getUserCart = async (userId: string | null) => {
 
   try {
     const cart = await db.cart.findFirst({
+      orderBy: {
+        createdAt: "asc",
+      },
       where: {
         orderedById: userId,
       },
@@ -189,6 +197,58 @@ export const addToCart = async (input: AddToCartInput) => {
     console.error("Error addding to cart:", error);
     return {
       message: "เกิดข้อผิดพลาดในการเพิ่มสินค้าลงในตะกร้า",
+    };
+  }
+};
+
+export const updateCartItem = async (input: UpdateCartInput) => {
+  const user = await authCheck();
+  if (!user || !canUpdateUserCart(user)) {
+    redirect("/auth/signin");
+  }
+
+  try {
+    if (input.newCount < 1) {
+      return {
+        message: "จำนวนสินค้าต้องมีอย่างน้อย 1 ชิ้น",
+      };
+    }
+
+    const cartItem = await db.cartItem.findUnique({
+      where: { id: input.cartItemId },
+      include: {
+        cart: true,
+        product: true,
+      },
+    });
+
+    if (!cartItem || cartItem.cart.orderedById !== user.id) {
+      return {
+        message: "ไม่พบสินค้าในตะกร้า",
+      };
+    }
+
+    if (cartItem.product.stock < input.newCount) {
+      return {
+        message: "สต๊อกสินค้าไม่เพียงพอ",
+      };
+    }
+
+    await db.cartItem.update({
+      where: { id: input.cartItemId },
+      data: {
+        count: input.newCount,
+        price: cartItem.product.price * input.newCount,
+      },
+    });
+
+    await recalculateCartTotal(cartItem.cartId);
+
+    revalidateCartCache(user.id);
+  } catch (error) {
+    console.error("Error updating cart:", error);
+    return {
+      message: "เกิดข้อผิดพลาดในการอัพเดทตะกร้าสินค้า",
     };
   }
 };
