@@ -287,3 +287,40 @@ export const removeFromCart = async (cartItemId: string) => {
     };
   }
 };
+
+export const clearCart = async () => {
+  const user = await authCheck();
+  if (!user || !canUpdateUserCart(user)) {
+    redirect("/auth/signin");
+  }
+
+  try {
+    const cart = await db.cart.findFirst({
+      where: {
+        orderedById: user.id,
+      },
+    });
+
+    if (!cart) {
+      return {
+        message: "ตะกร้าของคุณว่างเปล่าแล้ว",
+      };
+    }
+
+    await db.cartItem.deleteMany({
+      where: { cartId: cart.id },
+    });
+
+    await db.cart.update({
+      where: { id: cart.id },
+      data: { cartTotal: 0 },
+    });
+
+    revalidateCartCache(user.id);
+  } catch (error) {
+    console.error("Error clearing cart:", error);
+    return {
+      message: "ไม่สามารถเคลียร์ตะกร้าได้",
+    };
+  }
+};
