@@ -252,3 +252,38 @@ export const updateCartItem = async (input: UpdateCartInput) => {
     };
   }
 };
+
+export const removeFromCart = async (cartItemId: string) => {
+  const user = await authCheck();
+  if (!user || !canUpdateUserCart(user)) {
+    redirect("/auth/signin");
+  }
+
+  try {
+    const cartItem = await db.cartItem.findUnique({
+      where: { id: cartItemId },
+      include: {
+        cart: true,
+      },
+    });
+
+    if (!cartItem || cartItem.cart.orderedById !== user.id) {
+      return {
+        message: "ไม่พบสินค้าในตะกร้า",
+      };
+    }
+
+    await db.cartItem.delete({
+      where: { id: cartItemId },
+    });
+
+    await recalculateCartTotal(cartItem.cartId);
+
+    revalidateCartCache(user.id);
+  } catch (error) {
+    console.error("Error removing from cart:", error);
+    return {
+      message: "ไม่สามารถลบรายการสินค้านี้ออกจากตะกร้าได้",
+    };
+  }
+};
