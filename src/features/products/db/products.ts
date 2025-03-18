@@ -112,6 +112,11 @@ export const getProductById = async (id: string) => {
 };
 
 export const getFeatureProducts = async () => {
+  "use cache";
+
+  cacheLife("hours");
+  cacheTag(getProductGlobalTag());
+
   try {
     const products = await db.product.findMany({
       where: {
