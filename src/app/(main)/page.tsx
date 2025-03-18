@@ -1,6 +1,10 @@
-import { Button } from '@/components/ui/button'
+import Hero from "@/components/customer-page/home/hero";
 
 const HomePage = async () => {
-  return <Button>Click</Button>
-}
-export default HomePage
+  return (
+    <div>
+      <Hero />
+    </div>
+  );
+};
+export default HomePage;
