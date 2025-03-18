@@ -92,3 +92,16 @@ export const getCartItemCount = async (userId: string | null) => {
     return 0;
   }
 };
+
+const recalculateCartTotal = async (cartId: string) => {
+  const cartItems = await db.cartItem.findMany({
+    where: { cartId },
+  });
+
+  const cartTotal = cartItems.reduce((total, item) => total + item.price, 0);
+
+  await db.cart.update({
+    where: { id: cartId },
+    data: { cartTotal },
+  });
+};
