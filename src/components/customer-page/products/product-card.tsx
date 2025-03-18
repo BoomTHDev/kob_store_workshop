@@ -1,8 +1,10 @@
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { formatPrice } from "@/lib/formatPrice";
 import { cn } from "@/lib/utils";
 import { ProductType } from "@/types/product";
+import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -88,6 +90,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         </div>
       </CardContent>
+
+      <CardFooter className="p-3 gap-2">
+        <Button
+          className="w-full gap-1"
+          size="sm"
+          disabled={product.stock <= 0}
+        >
+          <ShoppingCart size={16} />
+          <span>เพิ่มลงตะกร้า</span>
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
