@@ -7,7 +7,7 @@ import { CartType } from "@/types/cart";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useTransition } from "react";
+import { useOptimistic, useTransition } from "react";
 import { removeFromCartAction, updateCartItemAction } from "../actions/carts";
 import { toast } from "sonner";
 
@@ -15,10 +15,57 @@ interface CartItemsProps {
   cart: CartType;
 }
 
+interface CartOptimistic {
+  type: "update" | "remove";
+  itemId: string;
+  newCount?: number;
+}
+
 const CartItems = ({ cart }: CartItemsProps) => {
   const [isPending, startTransition] = useTransition();
 
+  const [opCart, updateOpCart] = useOptimistic(
+    cart,
+    (state, { type, itemId, newCount }: CartOptimistic) => {
+      if (type === "update" && newCount !== undefined) {
+        const updatedItems = state.items.map((item) => {
+          if (item.id === itemId) {
+            const newPrice = newCount * item.product.price;
+            return {
+              ...item,
+              count: newCount,
+              price: newPrice,
+            };
+          }
+
+          return item;
+        });
+
+        const newTotal = updatedItems.reduce(
+          (sum, item) => sum + item.price,
+          0,
+        );
+
+        const newItemCount = updatedItems.reduce(
+          (sum, item) => sum + item.count,
+          0,
+        );
+
+        return {
+          ...state,
+          items: updatedItems,
+          cartTotal: newTotal,
+          itemCount: newItemCount,
+        };
+      }
+    },
+  );
+
   const handleUpdateQty = async (itemId: string, newCount: number) => {
+    startTransition(() => {
+      updateOpCart({ type: "update", itemId, newCount });
+    });
+
     const formData = new FormData();
     formData.append("cart-item-id", itemId);
     formData.append("new-count", newCount.toString());
@@ -41,7 +88,7 @@ const CartItems = ({ cart }: CartItemsProps) => {
     <Card className="p-4">
       <h2 className="text-xl font-semibold mb-4">รายการในตะกร้า</h2>
 
-      {cart.items.map((item, index) => (
+      {opCart.items.map((item, index) => (
         <div key={index} className="flex flex-col sm:flex-row gap-4 pb-4">
           <div className="relative size-24 border border-primary rounded-md overflow-hidden">
             <Link href={`/products/${item.product.id}`}>
