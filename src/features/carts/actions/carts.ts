@@ -1,6 +1,6 @@
 "use server";
 
-import { addToCart } from "../db/carts";
+import { addToCart, updateCartItem } from "../db/carts";
 
 export const addToCartAction = async (formData: FormData) => {
   const data = {
@@ -19,6 +19,22 @@ export const addToCartAction = async (formData: FormData) => {
     return {
       success: true,
       message: "เพิ่มสินค้าลงตะกร้าเรียบร้อยแล้ว",
+    };
+  }
+};
+
+export const updateCartItemAction = async (formData: FormData) => {
+  const data = {
+    cartItemId: formData.get("cart-item-id") as string,
+    newCount: parseInt(formData.get("new-count") as string) || 1,
+  };
+
+  const result = await updateCartItem(data);
+
+  if (result && result.message) {
+    return {
+      success: false,
+      message: result.message,
     };
   }
 };

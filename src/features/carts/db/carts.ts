@@ -61,7 +61,7 @@ export const getUserCart = async (userId: string | null) => {
           id: item.id,
           count: item.count,
           price: item.price,
-          prodduct: {
+          product: {
             ...item.product,
             mainImage: mainImage || null,
             lowStock: 5,
