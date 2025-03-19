@@ -58,6 +58,29 @@ const CartItems = ({ cart }: CartItemsProps) => {
           itemCount: newItemCount,
         };
       }
+
+      if (type === "remove") {
+        const updatedItems = state.items.filter((item) => itemId !== item.id);
+
+        const newTotal = updatedItems.reduce(
+          (sum, item) => sum + item.price,
+          0,
+        );
+
+        const newItemCount = updatedItems.reduce(
+          (sum, item) => sum + item.count,
+          0,
+        );
+
+        return {
+          ...state,
+          items: updatedItems,
+          cartTotal: newTotal,
+          itemCount: newItemCount,
+        };
+      }
+
+      return state;
     },
   );
 
@@ -78,6 +101,10 @@ const CartItems = ({ cart }: CartItemsProps) => {
   };
 
   const handleRemoveItem = async (itemId: string) => {
+    startTransition(() => {
+      updateOpCart({ type: "remove", itemId });
+    });
+
     const result = await removeFromCartAction(itemId);
     if (result && result.message) {
       toast.error(result.message);
