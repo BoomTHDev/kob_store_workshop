@@ -12,13 +12,11 @@ import { removeFromCartAction, updateCartItemAction } from "../actions/carts";
 import { toast } from "sonner";
 
 interface CartItemsProps {
-  cart: CartType | null;
+  cart: CartType;
 }
 
 const CartItems = ({ cart }: CartItemsProps) => {
-  // const [isPending, startTransition] = useTransition();
-
-  if (!cart) return null;
+  const [isPending, startTransition] = useTransition();
 
   const handleUpdateQty = async (itemId: string, newCount: number) => {
     const formData = new FormData();
