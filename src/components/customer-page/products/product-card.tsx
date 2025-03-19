@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import AddToCartButton from "@/features/carts/components/add-to-cart-button";
 import { formatPrice } from "@/lib/formatPrice";
 import { cn } from "@/lib/utils";
 import { ProductType } from "@/types/product";
@@ -92,14 +93,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </CardContent>
 
       <CardFooter className="p-3 gap-2">
-        <Button
+        <AddToCartButton
+          productId={product.id}
+          stock={product.stock}
           className="w-full gap-1"
-          size="sm"
-          disabled={product.stock <= 0}
-        >
-          <ShoppingCart size={16} />
-          <span>เพิ่มลงตะกร้า</span>
-        </Button>
+        />
       </CardFooter>
     </Card>
   );
