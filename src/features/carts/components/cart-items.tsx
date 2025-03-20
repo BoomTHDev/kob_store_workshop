@@ -22,6 +22,7 @@ interface CartOptimistic {
 }
 
 const CartItems = ({ cart }: CartItemsProps) => {
+  // eslint-disable-next-line
   const [isPending, startTransition] = useTransition();
 
   const [opCart, updateOpCart] = useOptimistic(

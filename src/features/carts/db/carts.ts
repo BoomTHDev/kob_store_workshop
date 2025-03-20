@@ -30,9 +30,6 @@ export const getUserCart = async (userId: string | null) => {
 
   try {
     const cart = await db.cart.findFirst({
-      orderBy: {
-        createdAt: "asc",
-      },
       where: {
         orderedById: userId,
       },
