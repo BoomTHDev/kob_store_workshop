@@ -133,6 +133,13 @@ export const createOrder = async (input: CheckoutInput) => {
     };
   } catch (error) {
     console.error("Error creating order:", error);
+
+    if (error instanceof Error) {
+      return {
+        message: error.message,
+      };
+    }
+
     return {
       message: "เกิดข้อผิดพลาดในการสร้างคำสั่งซื้อ กรุณาลองใหม่ในภายหลัง",
     };

@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { createOrder } from "../db/orders";
 
 export const checkoutAction = async (formData: FormData) => {
@@ -10,5 +11,15 @@ export const checkoutAction = async (formData: FormData) => {
     useProfileData: formData.get("use-profile-data") as string,
   };
 
-  await createOrder(data);
+  const result = await createOrder(data);
+
+  if (result && result.message && !result.orderId) {
+    return {
+      success: false,
+      message: result.message,
+      errors: result.error,
+    };
+  }
+
+  redirect(`my-orders/${result.orderId}`);
 };
