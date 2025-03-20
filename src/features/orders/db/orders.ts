@@ -4,6 +4,8 @@ import { canCreateOrder } from "../permissions/orders";
 import { checkoutSchema } from "../schemas/orders";
 import { db } from "@/lib/db";
 import { generateOrderNumber } from "@/lib/generateOrderNumber";
+import { clearCart } from "@/features/carts/db/carts";
+import { revalidateOrderCache } from "./cache";
 
 interface CheckoutInput {
   address: string;
@@ -57,7 +59,78 @@ export const createOrder = async (input: CheckoutInput) => {
 
     const orderNumber = generateOrderNumber();
 
-    console.log(orderNumber);
+    const totalAmount = cart.cartTotal + shippingFee;
+
+    // สร้างคำสั่งซื้อใหม่
+    const newOrder = await db.$transaction(async (prisma) => {
+      const order = await prisma.order.create({
+        data: {
+          orderNumber,
+          totalAmount,
+          status: "Pending",
+          address: data.address,
+          phone: data.phone,
+          note: data.note,
+          shippingFee,
+          customerId: user.id,
+        },
+      });
+
+      for (const item of cart.products) {
+        const product = await prisma.product.findUnique({
+          where: {
+            id: item.id,
+          },
+          include: {
+            images: true,
+          },
+        });
+
+        if (!product || product.stock < item.count) {
+          throw new Error(`สินค้า ${product?.title} มีไม่เพียงพอ`);
+        }
+
+        const mainImage = product.images.find((image) => image.isMain);
+
+        await prisma.orderItem.create({
+          data: {
+            quantity: item.count,
+            price: product.price,
+            totalPirce: item.price,
+            productTitle: product.title,
+            productImage: mainImage?.url || null,
+            orderId: order.id,
+            productId: item.productId,
+          },
+        });
+
+        await prisma.product.update({
+          where: {
+            id: item.productId,
+          },
+          data: {
+            sold: product.sold + item.count,
+            stock: product.stock - item.count,
+          },
+        });
+      }
+
+      return order;
+    });
+
+    if (!newOrder) {
+      return {
+        message: "เกิดข้อผิดพลาดในการสร้างคำสั่งซื้อ",
+      };
+    }
+
+    await clearCart();
+
+    revalidateOrderCache(newOrder.id, newOrder.customerId);
+
+    return {
+      orderId: newOrder.id,
+    };
   } catch (error) {
     console.error("Error creating order:", error);
     return {
