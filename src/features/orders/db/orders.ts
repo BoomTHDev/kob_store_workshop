@@ -18,6 +18,11 @@ export const createOrder = async (input: CheckoutInput) => {
 
   try {
     const useProfileData = input.useProfileData === "on";
+
+    if (useProfileData && user.address && user.tel) {
+      input.address = user.address;
+      input.phone = user.tel;
+    }
   } catch (error) {
     console.error("Error creating order:", error);
     return {
