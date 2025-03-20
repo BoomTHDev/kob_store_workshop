@@ -25,5 +25,5 @@ export const checkoutAction = async (
     };
   }
 
-  redirect(`my-orders/${result.orderId}`);
+  redirect(`/my-orders/${result.orderId}`);
 };
