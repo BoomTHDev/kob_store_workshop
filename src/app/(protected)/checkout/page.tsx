@@ -1,5 +1,7 @@
 import { authCheck } from "@/features/auths/db/auths";
+import { getUserCart } from "@/features/carts/db/carts";
 import CheckoutForm from "@/features/orders/components/checkout-form";
+import CheckoutSummary from "@/features/orders/components/checkout-summary";
 import { redirect } from "next/navigation";
 
 const CheckoutPage = async () => {
@@ -7,6 +9,12 @@ const CheckoutPage = async () => {
 
   if (!user) {
     redirect("/auth/signin");
+  }
+
+  const cart = await getUserCart(user.id);
+
+  if (!cart || cart.products.length === 0) {
+    redirect("/cart");
   }
 
   return (
@@ -18,7 +26,7 @@ const CheckoutPage = async () => {
           <CheckoutForm user={user} />
         </div>
         <div className="lg:col-span-1">
-          {/* <CheckoutSummary cart={cart} /> */}
+          <CheckoutSummary cart={cart} />
         </div>
       </div>
     </div>
