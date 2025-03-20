@@ -79,7 +79,7 @@ export const createOrder = async (input: CheckoutInput) => {
       for (const item of cart.products) {
         const product = await prisma.product.findUnique({
           where: {
-            id: item.id,
+            id: item.productId,
           },
           include: {
             images: true,
