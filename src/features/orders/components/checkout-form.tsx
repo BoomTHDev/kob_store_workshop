@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { UserType } from "@/types/user";
 import { ShoppingBag } from "lucide-react";
 import Form from "next/form";
+import { checkoutAction } from "../actions/orders";
 
 interface CheckoutFormProps {
   user: UserType;
@@ -21,7 +22,7 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
         <CardTitle className="text-lg">ข้อมูลการจัดส่ง</CardTitle>
       </CardHeader>
 
-      <Form action="">
+      <Form action={checkoutAction}>
         <CardContent className="flex flex-col gap-4">
           {hasUserData && (
             <div className="flex items-center space-x-2 mb-4 border p-3 rounded-md bg-muted/50">
