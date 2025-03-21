@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Ban } from "lucide-react";
 import Form from "next/form";
 import { cancelOrderStatusAction } from "../actions/orders";
+import { useForm } from "@/hooks/use-form";
 
 interface CancelOrderModalProps {
   open: boolean;
@@ -16,6 +17,8 @@ const CancelOrderModal = ({
   onOpenChange,
   orderId,
 }: CancelOrderModalProps) => {
+  const { formAction, isPending } = useForm(cancelOrderStatusAction);
+
   return (
     <Modal
       open={open}
@@ -23,7 +26,7 @@ const CancelOrderModal = ({
       title="ยกเลิกคำสั่งซื้อ"
       description="คุณต้องการยกเลิกคำสั่งซื้อนี้ใช่หรือไม่?"
     >
-      <Form action={cancelOrderStatusAction}>
+      <Form action={formAction}>
         <input type="hidden" name="order-id" value={orderId} />
 
         <div className="flex justify-end space-x-2 pt-2">
@@ -31,6 +34,7 @@ const CancelOrderModal = ({
             variant="outline"
             type="button"
             onClick={() => onOpenChange(false)}
+            disabled={isPending}
           >
             ยกเลิก
           </Button>
@@ -38,6 +42,7 @@ const CancelOrderModal = ({
             name="ยกเลิกคำสั่งซื้อ"
             icon={Ban}
             className="bg-destructive hover:bg-destructive/80"
+            pending={isPending}
           />
         </div>
       </Form>
