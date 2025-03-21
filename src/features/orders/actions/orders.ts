@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import {
   cancelOrderStatus,
   createOrder,
+  updateOrderStatus,
   uploadPaymentSlip,
 } from "../db/orders";
 import { InitialFormState } from "@/types/action";
@@ -69,4 +70,14 @@ export const cancelOrderStatusAction = async (
         success: true,
         message: "ยกเลิกคำสั่งซื้อสำเร็จ",
       };
+};
+
+export const updateOrderStatusAction = async (formData: FormData) => {
+  const data = {
+    orderId: formData.get("order-id") as string,
+    status: formData.get("status") as string,
+    trackingNumber: formData.get("tracking-number") as string,
+  };
+
+  await updateOrderStatus(data);
 };

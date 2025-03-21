@@ -1,6 +1,18 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -12,13 +24,40 @@ import {
 import { formatPrice } from "@/lib/formatPrice";
 import { getStatusColor } from "@/lib/utils";
 import { OrderType } from "@/types/order";
+import { OrderStatus } from "@prisma/client";
+import { Ban, Check, Truck } from "lucide-react";
 import Image from "next/image";
+import { useState, useTransition } from "react";
+import { updateOrderStatusAction } from "../actions/orders";
 
 interface AdminOrderDetailProps {
   order: OrderType;
 }
 
 const AdminOrderDetail = ({ order }: AdminOrderDetailProps) => {
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus>(
+    order.status,
+  );
+  const [trackingNumber, setTrackingNumber] = useState(
+    order.trackingNumber || "",
+  );
+
+  const [isPending, startTransition] = useTransition();
+
+  const handleUpdateStatus = () => {
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("order-id", order.id);
+      formData.append("status", selectedStatus);
+
+      if (trackingNumber) {
+        formData.append("tracking-number", trackingNumber);
+      }
+
+      await updateOrderStatusAction(formData);
+    });
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2">
@@ -134,6 +173,119 @@ const AdminOrderDetail = ({ order }: AdminOrderDetailProps) => {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      <div>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg">Order Summary</CardTitle>
+          </CardHeader>
+
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Subtotal:</span>
+                <span>
+                  {formatPrice(order.totalAmount - order.shippingFee)}
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Shipping fee:</span>
+                <span>{formatPrice(order.shippingFee)}</span>
+              </div>
+
+              <Separator />
+
+              <div className="flex justify-between font-bold">
+                <span>Total:</span>
+                <span>{formatPrice(order.totalAmount)}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Update Order Status</CardTitle>
+          </CardHeader>
+
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  value={selectedStatus}
+                  onValueChange={(value) =>
+                    setSelectedStatus(value as OrderStatus)
+                  }
+                  disabled={order.status === "Cancelled"}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Paid">Paid</SelectItem>
+                    <SelectItem value="Shipped">Shipped</SelectItem>
+                    <SelectItem value="Delivered">Delivered</SelectItem>
+                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {(selectedStatus === "Shipped" ||
+                selectedStatus === "Delivered") && (
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="tracking">Tracking Number</Label>
+                  <Input
+                    id="tracking"
+                    placeholder="Enter tracking number"
+                    value={trackingNumber}
+                    onChange={(event) => setTrackingNumber(event.target.value)}
+                  />
+                </div>
+              )}
+            </div>
+
+            {order.paymentImage && (
+              <div className="space-y-2">
+                <Label>Payment Proof</Label>
+                <div className="relative aspect-square w-full rounded-md overflow-hidden border">
+                  <Image
+                    alt="Payment proof"
+                    src={order.paymentImage}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                {order.paymentAt && (
+                  <p className="text-sm text-muted-foreground">
+                    Paid at: {order.paymentAtFormatted}
+                  </p>
+                )}
+              </div>
+            )}
+
+            <Button
+              onClick={handleUpdateStatus}
+              disabled={
+                isPending ||
+                selectedStatus === order.status ||
+                (["Shipped", "Delivered"].includes(selectedStatus) &&
+                  !trackingNumber)
+              }
+            >
+              <>
+                {selectedStatus === "Shipped" && <Truck size={16} />}
+                {selectedStatus === "Delivered" && <Check size={16} />}
+                {selectedStatus === "Cancelled" && <Ban size={16} />}
+              </>
+              <span>Update Status</span>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
