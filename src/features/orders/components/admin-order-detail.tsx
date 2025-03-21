@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -75,6 +76,64 @@ const AdminOrderDetail = ({ order }: AdminOrderDetailProps) => {
             </Table>
           </CardContent>
         </Card>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Customer Information</CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-3">
+              <div>
+                <Label className="text-muted-foreground text-sm">Name</Label>
+                <div className="font-medium">
+                  {order.customer.name || "Not provided"}
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-muted-foreground text-sm">Email</Label>
+                <div className="font-medium">{order.customer.email}</div>
+              </div>
+
+              <div>
+                <Label className="text-muted-foreground text-sm">Phone</Label>
+                <div className="font-medium">
+                  {order.phone || "Not provided"}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Shipping Information</CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-3">
+              <div>
+                <Label className="text-muted-foreground text-sm">Address</Label>
+                <div className="font-medium">
+                  {order.address || "Not provided"}
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-muted-foreground text-sm">
+                  Tracking Number
+                </Label>
+                <div className="font-medium">
+                  {order.trackingNumber || "Not provided"}
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-muted-foreground text-sm">Notes</Label>
+                <div className="font-medium">{order.note || "None"}</div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
