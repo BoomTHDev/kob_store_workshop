@@ -13,19 +13,37 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatPrice } from "@/lib/formatPrice";
+import { generatePromptPayQR } from "@/lib/generatePromptPayQR";
 import { getStatusColor, getStatusText } from "@/lib/utils";
 import { OrderType } from "@/types/order";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Upload } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface OrderDetailProps {
   order: OrderType;
 }
 
 const OrderDetail = ({ order }: OrderDetailProps) => {
-  const [qrCodeURL, setQrCodeURL] = useState(null);
+  const [qrCodeURL, setQrCodeURL] = useState<string | null>(null);
   const [isGeneratingQR, setIsGenerateingQR] = useState(false);
+
+  const [isPaymentFormModal, setIsPaymentFormModal] = useState(false);
+
+  const handleGenerateQR = () => {
+    try {
+      setIsGenerateingQR(true);
+
+      const qrCode = generatePromptPayQR(order.totalAmount);
+      setQrCodeURL(qrCode);
+    } catch (error) {
+      console.error(error);
+      toast.error("เกิดข้อผิดพลาดในการสร้าง QR Code");
+    } finally {
+      setIsGenerateingQR(false);
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -168,7 +186,10 @@ const OrderDetail = ({ order }: OrderDetailProps) => {
                       </div>
                     </div>
                   ) : (
-                    <Button>
+                    <Button
+                      onClick={handleGenerateQR}
+                      disabled={isGeneratingQR}
+                    >
                       <CreditCard />
                       <span>
                         {isGeneratingQR
@@ -177,6 +198,14 @@ const OrderDetail = ({ order }: OrderDetailProps) => {
                       </span>
                     </Button>
                   )}
+
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsPaymentFormModal(true)}
+                  >
+                    <Upload size={16} />
+                    <span>อัพโหลดหลักฐานการชำระเงิน</span>
+                  </Button>
                 </div>
               </div>
             )}
