@@ -232,6 +232,25 @@ const OrderDetail = ({ order }: OrderDetailProps) => {
                 />
               </div>
             )}
+
+            {order.paymentImage && (
+              <div className="flex flex-col gap-2 pt-2">
+                <h3 className="font-medium">หลักฐานการชำระเงิน:</h3>
+                <div className="relative aspect-square w-full rounded-md overflow-hidden border">
+                  <Image
+                    alt="Payment proof"
+                    src={order.paymentImage}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                {order.paymentAt && (
+                  <p className="text-sm text-muted-foreground">
+                    ชำระเงินเมื่อ: {order.paymentAtFormatted}
+                  </p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
