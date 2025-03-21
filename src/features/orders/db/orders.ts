@@ -5,7 +5,12 @@ import { checkoutSchema } from "../schemas/orders";
 import { db } from "@/lib/db";
 import { generateOrderNumber } from "@/lib/generateOrderNumber";
 import { clearCart } from "@/features/carts/db/carts";
-import { revalidateOrderCache } from "./cache";
+import { getOrderIdTag, revalidateOrderCache } from "./cache";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
+import formatDate from "@/lib/formatDate";
 
 interface CheckoutInput {
   address: string;
@@ -143,5 +148,63 @@ export const createOrder = async (input: CheckoutInput) => {
     return {
       message: "เกิดข้อผิดพลาดในการสร้างคำสั่งซื้อ กรุณาลองใหม่ในภายหลัง",
     };
+  }
+};
+
+export const getOrderById = async (userId: string, orderId: string) => {
+  "use cache";
+
+  if (!userId) {
+    redirect("/auth/signin");
+  }
+
+  cacheLife("minutes");
+  cacheTag(getOrderIdTag(orderId));
+
+  try {
+    const order = await db.order.findUnique({
+      where: { id: orderId },
+      include: {
+        customer: true,
+        items: {
+          include: {
+            product: {
+              include: {
+                category: true,
+                images: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      return null;
+    }
+
+    const items = order.items.map((item) => {
+      const mainImage = item.product.images.find((image) => image.isMain);
+
+      return {
+        ...item,
+        product: {
+          ...item.product,
+          mainImage,
+          lowStock: 5,
+          sku: item.product.id.substring(0, 8).toUpperCase(),
+        },
+      };
+    });
+
+    return {
+      ...order,
+      items,
+      createdAtFormatted: formatDate(order.createdAt),
+      paymentAtFormatted: order.paymentAt ? formatDate(order.paymentAt) : null,
+    };
+  } catch (error) {
+    console.error(`Error getting order ${orderId}:`, error);
+    return null;
   }
 };
