@@ -20,6 +20,7 @@ import { CreditCard, Upload } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
+import PaymentFormModal from "./payment-form-modal";
 
 interface OrderDetailProps {
   order: OrderType;
@@ -207,6 +208,12 @@ const OrderDetail = ({ order }: OrderDetailProps) => {
                     <span>อัพโหลดหลักฐานการชำระเงิน</span>
                   </Button>
                 </div>
+
+                <PaymentFormModal
+                  open={isPaymentFormModal}
+                  onOpenChange={setIsPaymentFormModal}
+                  orderId={order.id}
+                />
               </div>
             )}
           </CardContent>

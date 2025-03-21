@@ -208,3 +208,18 @@ export const getOrderById = async (userId: string, orderId: string) => {
     return null;
   }
 };
+
+export const uploadPaymentSlip = async (orderId: string, file: File) => {
+  const user = await authCheck();
+  if (!user) {
+    redirect("/auth/signin");
+  }
+
+  try {
+  } catch (error) {
+    console.error("Error uploading payment slip:", error);
+    return {
+      message: "เกิดข้อผิดพลาดในการอัพโหลดสลิปการชำระเงิน",
+    };
+  }
+};
