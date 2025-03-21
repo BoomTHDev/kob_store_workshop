@@ -5,6 +5,7 @@ import { useSidebar } from "@/providers/SidebarProvider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
+  ClipboardList,
   FolderTree,
   LayoutDashboard,
   LogOut,
@@ -42,6 +43,11 @@ const SidebarAdmin = ({ user }: SidebarAdminProps) => {
       href: "/admin/products",
       icon: <ShoppingCart size={20} />,
       label: "Products",
+    },
+    {
+      href: "/admin/orders",
+      icon: <ClipboardList size={20} />,
+      label: "Orders",
     },
   ];
 
