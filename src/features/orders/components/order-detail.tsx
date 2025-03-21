@@ -16,11 +16,12 @@ import { formatPrice } from "@/lib/formatPrice";
 import { generatePromptPayQR } from "@/lib/generatePromptPayQR";
 import { getStatusColor, getStatusText } from "@/lib/utils";
 import { OrderType } from "@/types/order";
-import { CreditCard, Upload } from "lucide-react";
+import { Ban, CreditCard, Upload } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import PaymentFormModal from "./payment-form-modal";
+import CancelOrderModal from "./cancel-order-modal";
 
 interface OrderDetailProps {
   order: OrderType;
@@ -31,6 +32,7 @@ const OrderDetail = ({ order }: OrderDetailProps) => {
   const [isGeneratingQR, setIsGenerateingQR] = useState(false);
 
   const [isPaymentFormModal, setIsPaymentFormModal] = useState(false);
+  const [isCancelModal, setIsCancelModal] = useState(false);
 
   const handleGenerateQR = () => {
     try {
@@ -207,11 +209,25 @@ const OrderDetail = ({ order }: OrderDetailProps) => {
                     <Upload size={16} />
                     <span>อัพโหลดหลักฐานการชำระเงิน</span>
                   </Button>
+
+                  <Button
+                    variant="destructive"
+                    onClick={() => setIsCancelModal(true)}
+                  >
+                    <Ban size={16} />
+                    <span>ยกเลิกคำสั่งซื้อ</span>
+                  </Button>
                 </div>
 
                 <PaymentFormModal
                   open={isPaymentFormModal}
                   onOpenChange={setIsPaymentFormModal}
+                  orderId={order.id}
+                />
+
+                <CancelOrderModal
+                  open={isCancelModal}
+                  onOpenChange={setIsCancelModal}
                   orderId={order.id}
                 />
               </div>
