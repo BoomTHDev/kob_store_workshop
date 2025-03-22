@@ -94,8 +94,3 @@ export const getSalesData = async ({ from, to }: DateRangeParams) => {
     return [];
   }
 };
-
-getSalesData({
-  from: "2025-03-01",
-  to: "2025-03-31",
-});
