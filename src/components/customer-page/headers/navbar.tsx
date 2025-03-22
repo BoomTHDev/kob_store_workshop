@@ -5,7 +5,7 @@ import { DesktopNavLinks } from "./navlinks";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import DesktopUserMenu from "./desktop-user-menu";
-import { getCartItemCount, getUserCart } from "@/features/carts/db/carts";
+import { getUserCart } from "@/features/carts/db/carts";
 
 interface NavbarProps {
   user: UserType | null;
